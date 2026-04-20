@@ -1,8 +1,8 @@
-import { Shirt } from 'lucide-react';
+import { Shirt } from "lucide-react";
 
 const LINKS = {
-  Product: ['Fit Analysis', 'How It Works', 'Size Guide'],
-  Support: ['FAQ', 'Contact', 'Privacy Policy'],
+  Product: ["Fit Analysis", "How It Works", "Size Guide"],
+  Support: ["FAQ", "Contact", "Privacy Policy"],
 };
 
 export function Footer() {
@@ -18,14 +18,17 @@ export function Footer() {
             <span className="font-bold tracking-widest text-lg">FITRO</span>
           </div>
           <p className="text-white/40 text-sm leading-relaxed max-w-[220px]">
-            Know your exact fit before you buy. No more returns, no more guessing.
+            Know your exact fit before you buy. No more returns, no more
+            guessing.
           </p>
         </div>
 
         {/* Links */}
         {Object.entries(LINKS).map(([section, items]) => (
           <div key={section}>
-            <h4 className="text-xs uppercase tracking-[0.25em] text-white/40 mb-4">{section}</h4>
+            <h4 className="text-xs uppercase tracking-[0.25em] text-white/40 mb-4">
+              {section}
+            </h4>
             <ul className="space-y-2">
               {items.map((item) => (
                 <li key={item}>
