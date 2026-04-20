@@ -1,40 +1,141 @@
-import { Shirt } from 'lucide-react';
+import { Shirt, Ruler, Zap, ShieldCheck, TrendingUp } from 'lucide-react';
+
+const CATEGORIES = ['T-Shirt', 'Pants', 'Shirt'];
+
+const FEATURES = [
+  {
+    icon: Ruler,
+    title: 'Precise Measurement',
+    desc: 'Enter your body measurements once and get accurate sizing every time.',
+  },
+  {
+    icon: Zap,
+    title: 'Instant Analysis',
+    desc: 'Our engine calculates fit ease across chest, waist, and hips in milliseconds.',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Multi-Region',
+    desc: 'Works with EU, US, IT, TU, and CH sizing standards without confusion.',
+  },
+  {
+    icon: TrendingUp,
+    title: 'Material Aware',
+    desc: 'Accounts for denim rigidity, polyester stretch, and cotton flexibility.',
+  },
+];
+
+const STEPS = [
+  { num: '01', title: 'Enter Your Measurements', desc: 'Height, weight, chest, waist, hips.' },
+  { num: '02', title: 'Describe the Garment', desc: 'Category, material, fit type, and garment measurements.' },
+  { num: '03', title: 'Get Your Fit Report', desc: 'Tight, Perfect Fit, Loose — with reasoning and advice.' },
+];
 
 export function LandingPage({ onNavigate }) {
   return (
-    <div className="text-center px-6 animate-in slide-in-from-bottom duration-700">
-      <h1 className="text-5xl md:text-6xl font-light leading-tight">
-        Find Your{' '}
-        <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-400">
-          Perfect Fit
-        </span>
-        <br /> Before You Buy
-      </h1>
-      <div className="mt-8 border border-white/20 rounded-full py-2 px-6 inline-block bg-white/5 backdrop-blur-sm text-sm tracking-widest uppercase">
-        Stop guessing your size
-      </div>
-      <div className="flex gap-4 justify-center mt-10">
-        {['T-shirt', 'Shoes', 'Pants'].map((item) => (
+    <div className="w-full">
+      {/* ── Hero ── */}
+      <section className="text-center px-6 pt-8 pb-20 animate-in slide-in-from-bottom duration-700">
+        <div className="inline-flex items-center gap-2 border border-white/20 rounded-full py-1.5 px-5 bg-white/5 backdrop-blur-sm text-xs tracking-widest uppercase text-white/60 mb-8">
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+          AI-Powered Fit Analysis
+        </div>
+
+        <h1 className="text-5xl md:text-7xl font-light leading-[1.1] tracking-tight">
+          Find Your{' '}
+          <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-400">
+            Perfect Fit
+          </span>
+          <br />
+          <span className="text-white/50">Before You Buy</span>
+        </h1>
+
+        <p className="mt-6 text-white/50 text-base md:text-lg max-w-md mx-auto leading-relaxed">
+          Stop returning clothes that don&apos;t fit. Know your exact fit — Tight, Perfect, or Loose — before checkout.
+        </p>
+
+        <div className="flex flex-wrap gap-3 justify-center mt-8">
+          {CATEGORIES.map((item) => (
+            <span
+              key={item}
+              className="px-5 py-1.5 border border-white/15 rounded-full text-[11px] uppercase tracking-widest text-white/60"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+
+        {/* CTA Card */}
+        <div
+          onClick={() => onNavigate('userInfo')}
+          className="mt-14 bg-white rounded-[40px] p-10 md:p-14 flex flex-col items-center cursor-pointer hover:bg-gray-50 transition-all group shadow-2xl mx-auto w-fit"
+        >
+          <div className="relative">
+            <div className="absolute inset-0 bg-cyan-400/20 rounded-2xl blur-xl group-hover:bg-cyan-400/30 transition-all" />
+            <div className="relative border-2 border-dashed border-gray-200 rounded-2xl p-8 group-hover:border-cyan-400 transition-colors">
+              <Shirt className="text-gray-300 group-hover:text-cyan-500 transition-colors" size={64} strokeWidth={1} />
+            </div>
+          </div>
+          <p className="mt-5 text-gray-700 font-semibold text-sm">Analyze My Fit</p>
+          <div className="flex gap-2 mt-3">
+            {['AI Analysis', 'Instant', 'Free'].map((tag) => (
+              <span key={tag} className="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">
+                {tag}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── How It Works ── */}
+      <section className="px-6 py-20 max-w-4xl mx-auto">
+        <p className="text-center text-xs uppercase tracking-[0.3em] text-cyan-400 mb-4">How It Works</p>
+        <h2 className="text-center text-3xl md:text-4xl font-bold mb-14">Three steps to perfect fit</h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {STEPS.map(({ num, title, desc }) => (
+            <div key={num} className="bg-white/5 border border-white/10 rounded-[28px] p-7 hover:border-cyan-500/40 transition-all">
+              <span className="text-4xl font-black text-white/10">{num}</span>
+              <h3 className="text-white font-semibold mt-3 mb-2">{title}</h3>
+              <p className="text-white/50 text-sm leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Features ── */}
+      <section className="px-6 py-20 max-w-5xl mx-auto">
+        <p className="text-center text-xs uppercase tracking-[0.3em] text-cyan-400 mb-4">Why FITRO</p>
+        <h2 className="text-center text-3xl md:text-4xl font-bold mb-14">Built for precision</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {FEATURES.map(({ icon, title, desc }) => {
+            const FeatureIcon = icon;
+            return (
+            <div key={title} className="bg-white/5 border border-white/10 rounded-[28px] p-6 hover:border-cyan-500/40 transition-all group">
+              <div className="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-4 group-hover:bg-cyan-500/20 transition-colors">
+                <FeatureIcon className="text-cyan-400" size={20} />
+              </div>
+              <h3 className="text-white font-semibold text-sm mb-2">{title}</h3>
+              <p className="text-white/50 text-xs leading-relaxed">{desc}</p>
+            </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── CTA Band ── */}
+      <section className="px-6 py-20 text-center">
+        <div className="max-w-xl mx-auto bg-white/5 border border-white/10 rounded-[36px] p-10">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3">Ready to find your fit?</h2>
+          <p className="text-white/50 text-sm mb-7">It takes less than 2 minutes. No account needed.</p>
           <button
-            key={item}
-            className="px-6 py-2 border border-white/20 rounded-full text-[10px] uppercase tracking-widest hover:bg-white hover:text-[#0f172a] transition-all"
+            onClick={() => onNavigate('userInfo')}
+            className="bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] px-10 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
           >
-            {item}
+            Start Analysis
           </button>
-        ))}
-      </div>
-      <div
-        onClick={() => onNavigate('userInfo')}
-        className="mt-16 bg-white rounded-[40px] p-12 flex flex-col items-center cursor-pointer hover:bg-gray-50 transition-all group shadow-2xl mx-auto w-fit"
-      >
-        <div className="border-2 border-dashed border-gray-200 rounded-2xl p-6 group-hover:border-cyan-400 transition-colors">
-          <Shirt className="text-gray-300 group-hover:text-cyan-500" size={60} strokeWidth={1} />
         </div>
-        <div className="flex gap-3 mt-6 text-gray-500 font-bold text-[10px] uppercase">
-          <span className="bg-gray-100 px-4 py-1.5 rounded-full">AI Analysis</span>
-          <span className="bg-gray-100 px-4 py-1.5 rounded-full">Secure</span>
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
+

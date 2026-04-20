@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from './components/Navbar';
+import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/LoginPage';
 import { UserInfoPage } from './pages/UserInfoPage';
@@ -27,6 +28,8 @@ export default function App() {
     }
   }, [currentPage, token]);
 
+  const isLanding = currentPage === 'landing';
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#16203a] to-[#2d3a5a] text-white flex flex-col relative overflow-hidden font-sans">
       <Navbar
@@ -35,12 +38,13 @@ export default function App() {
         token={token}
         onLogout={handleLogout}
       />
-      <div className="flex-grow flex items-center justify-center pt-20">
+      <div className={`flex-grow flex pt-20 ${isLanding ? 'flex-col' : 'items-center justify-center'}`}>
         {currentPage === 'landing' && <LandingPage onNavigate={setCurrentPage} />}
         {currentPage === 'login' && <LoginPage onLogin={handleLogin} />}
         {currentPage === 'userInfo' && <UserInfoPage />}
         {currentPage === 'admin' && token && <AdminPage token={token} />}
       </div>
+      {isLanding && <Footer />}
     </div>
   );
 }
