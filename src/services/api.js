@@ -11,3 +11,6 @@ export const getUsers = (token) =>
 
 export const login = (username, password) =>
   api.post('/api/auth', { username, password });
+
+export const lookupByEmail = (email) =>
+  api.get(`/api/lookup?email=${encodeURIComponent(email)}`);

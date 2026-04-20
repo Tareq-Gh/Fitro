@@ -8,8 +8,9 @@ import {
   Info,
   ChevronRight,
   ChevronLeft,
+  Mail,
 } from "lucide-react";
-import { submitUserInfo } from "../services/api";
+import { submitUserInfo, lookupByEmail } from "../services/api";
 import { analyzeFit } from "../utils/fitAnalyzer";
 import { useLang } from "../context/useLang";
 
@@ -108,6 +109,11 @@ export function UserInfoPage() {
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [phase, setPhase] = useState("email");
+  const [email, setEmail] = useState(() => localStorage.getItem("fitro_email") ?? "");
+  const [welcomeBack, setWelcomeBack] = useState(null);
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [isNewProfile, setIsNewProfile] = useState(false);
 
   function setBodyField(key, val) {
     setBody((p) => ({ ...p, [key]: val }));
@@ -119,12 +125,51 @@ export function UserInfoPage() {
     setGarment((p) => ({ ...p, [key]: val }));
   }
 
+  async function handleEmailLookup(e) {
+    e.preventDefault();
+    setLookupLoading(true);
+    try {
+      const { data } = await lookupByEmail(email);
+      if (data.found) {
+        const u = data.user;
+        setBody({
+          name: u.name ?? "",
+          gender: u.gender ?? "",
+          height_cm: u.height?.toString() ?? "",
+          weight_kg: u.weight?.toString() ?? "",
+          chest_cm: u.chest?.toString() ?? "",
+          waist_cm: u.waist?.toString() ?? "",
+          hips_cm: u.hips?.toString() ?? "",
+        });
+        setWelcomeBack({ name: u.name });
+        setIsNewProfile(false);
+      } else {
+        setWelcomeBack(null);
+        setIsNewProfile(true);
+      }
+      localStorage.setItem("fitro_email", email);
+    } catch {
+      // network error — proceed anyway
+    } finally {
+      setLookupLoading(false);
+      setPhase("form");
+    }
+  }
+
+  function handleGuestContinue() {
+    setEmail("");
+    setWelcomeBack(null);
+    setIsNewProfile(false);
+    setPhase("form");
+  }
+
   async function handleAnalyze(e) {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
       await submitUserInfo({
+        email: email || undefined,
         name: body.name,
         height: Number(body.height_cm),
         weight: Number(body.weight_kg),
@@ -134,6 +179,7 @@ export function UserInfoPage() {
         hips: parseNum(body.hips_cm),
       });
       localStorage.setItem("fitro_body", JSON.stringify(body));
+      if (email) localStorage.setItem("fitro_email", email);
       setResult(
         analyzeFit({
           user: {
@@ -165,6 +211,63 @@ export function UserInfoPage() {
     } finally {
       setLoading(false);
     }
+  }
+
+  if (phase === "email") {
+    return (
+      <div
+        className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[440px] mx-4"
+        style={{ animation: "scale-in 0.35s ease both" }}
+      >
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-14 h-14 bg-[#1e293b] rounded-full flex items-center justify-center mb-3 shadow-xl">
+            <User className="text-white" size={26} />
+          </div>
+          <h2 className="text-xl font-bold text-gray-800">
+            {t("userInfo.emailGateTitle")}
+          </h2>
+          <p className="text-gray-400 text-xs mt-1 text-center px-4">
+            {t("userInfo.emailGateSub")}
+          </p>
+        </div>
+
+        <form onSubmit={handleEmailLookup} className="space-y-4">
+          <div className="relative">
+            <Mail className="absolute left-4 top-3 text-gray-300" size={16} />
+            <input
+              type="email"
+              placeholder={t("userInfo.emailPlaceholder")}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full pl-12 pr-4 py-2.5 bg-gray-50 rounded-full text-gray-800 text-sm outline-none focus:ring-1 focus:ring-cyan-400"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={lookupLoading}
+            className={`w-full py-3.5 rounded-full ${btnGradient} text-white font-bold flex items-center justify-center gap-2 disabled:opacity-60`}
+          >
+            {lookupLoading ? (
+              <span className="flex items-center justify-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce" style={{ animationDelay: "150ms" }} />
+                <span className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce" style={{ animationDelay: "300ms" }} />
+              </span>
+            ) : (
+              t("userInfo.emailGateBtn")
+            )}
+          </button>
+        </form>
+
+        <button
+          onClick={handleGuestContinue}
+          className="w-full mt-4 text-gray-400 text-xs hover:text-gray-600 transition text-center"
+        >
+          {t("userInfo.emailGateGuest")}
+        </button>
+      </div>
+    );
   }
 
   if (result) {
@@ -250,7 +353,6 @@ export function UserInfoPage() {
           onClick={() => {
             setResult(null);
             setStep(1);
-            setBody({});
             setProduct({});
             setGarment({});
           }}
@@ -305,6 +407,23 @@ export function UserInfoPage() {
               {t("userInfo.step1Sub")}
             </p>
           </div>
+
+          {welcomeBack && (
+            <div className="flex items-center gap-2 bg-green-50 border border-green-100 rounded-2xl px-4 py-3">
+              <CheckCircle2 size={15} className="text-green-500 flex-shrink-0" />
+              <p className="text-green-700 text-xs leading-snug">
+                {t("userInfo.welcomeBack").replace("{name}", welcomeBack.name)}
+              </p>
+            </div>
+          )}
+          {isNewProfile && (
+            <div className="flex items-center gap-2 bg-blue-50 border border-blue-100 rounded-2xl px-4 py-3">
+              <Info size={15} className="text-blue-400 flex-shrink-0" />
+              <p className="text-blue-600 text-xs leading-snug">
+                {t("userInfo.newProfile")}
+              </p>
+            </div>
+          )}
 
           <Field
             label={t("userInfo.name")}

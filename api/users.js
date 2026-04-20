@@ -10,7 +10,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "POST") {
-    const { name, gender, height, weight, chest, waist, hips } = req.body ?? {};
+    const { name, gender, height, weight, chest, waist, hips, email } = req.body ?? {};
 
     if (!name || !height || !weight) {
       return res
@@ -23,16 +23,27 @@ export default async function handler(req, res) {
         ? Number(v)
         : undefined;
 
+    const data = {
+      name,
+      gender,
+      height: Number(height),
+      weight: Number(weight),
+      chest: toNum(chest),
+      waist: toNum(waist),
+      hips: toNum(hips),
+    };
+
     try {
-      const user = await User.create({
-        name,
-        gender,
-        height: Number(height),
-        weight: Number(weight),
-        chest: toNum(chest),
-        waist: toNum(waist),
-        hips: toNum(hips),
-      });
+      if (email && typeof email === "string" && email.trim()) {
+        const clean = email.toLowerCase().trim();
+        const user = await User.findOneAndUpdate(
+          { email: clean },
+          { ...data, email: clean },
+          { upsert: true, new: true, setDefaultsOnInsert: true }
+        );
+        return res.status(200).json(user);
+      }
+      const user = await User.create(data);
       return res.status(201).json(user);
     } catch {
       return res.status(500).json({ error: "Failed to save user" });
