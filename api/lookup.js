@@ -4,7 +4,7 @@ import { User } from "./_User.js";
 export default async function handler(req, res) {
   if (req.method !== "GET") return res.status(405).end();
 
-  const email = ((req.query.email ?? "")).toLowerCase().trim();
+  const email = (req.query.email ?? "").toLowerCase().trim();
   if (!email) return res.status(400).json({ error: "email required" });
 
   try {
@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   const user = await User.findOne({ email }).select(
-    "name gender height weight chest waist hips email -_id"
+    "name gender height weight chest waist hips email -_id",
   );
 
   if (!user) return res.json({ found: false });

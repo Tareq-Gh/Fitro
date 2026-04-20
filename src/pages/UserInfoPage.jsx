@@ -110,7 +110,9 @@ export function UserInfoPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [phase, setPhase] = useState("email");
-  const [email, setEmail] = useState(() => localStorage.getItem("fitro_email") ?? "");
+  const [email, setEmail] = useState(
+    () => localStorage.getItem("fitro_email") ?? "",
+  );
   const [welcomeBack, setWelcomeBack] = useState(null);
   const [lookupLoading, setLookupLoading] = useState(false);
   const [isNewProfile, setIsNewProfile] = useState(false);
@@ -250,9 +252,18 @@ export function UserInfoPage() {
           >
             {lookupLoading ? (
               <span className="flex items-center justify-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce" style={{ animationDelay: "0ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce" style={{ animationDelay: "150ms" }} />
-                <span className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce" style={{ animationDelay: "300ms" }} />
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
+                  style={{ animationDelay: "0ms" }}
+                />
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
+                  style={{ animationDelay: "150ms" }}
+                />
+                <span
+                  className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
+                  style={{ animationDelay: "300ms" }}
+                />
               </span>
             ) : (
               t("userInfo.emailGateBtn")
@@ -410,7 +421,10 @@ export function UserInfoPage() {
 
           {welcomeBack && (
             <div className="flex items-center gap-2 bg-green-50 border border-green-100 rounded-2xl px-4 py-3">
-              <CheckCircle2 size={15} className="text-green-500 flex-shrink-0" />
+              <CheckCircle2
+                size={15}
+                className="text-green-500 flex-shrink-0"
+              />
               <p className="text-green-700 text-xs leading-snug">
                 {t("userInfo.welcomeBack").replace("{name}", welcomeBack.name)}
               </p>

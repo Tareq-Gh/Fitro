@@ -1,6 +1,8 @@
 export const ar = {
   nav: {
     home: "الرئيسية",
+    howItWorks: "كيف يعمل",
+    features: "المميزات",
     dashboard: "لوحة التحكم",
     logout: "تسجيل الخروج",
     admin: "المشرف",

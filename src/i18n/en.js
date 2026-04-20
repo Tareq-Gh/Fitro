@@ -1,6 +1,8 @@
 export const en = {
   nav: {
     home: "Home",
+    howItWorks: "How It Works",
+    features: "Features",
     dashboard: "Dashboard",
     logout: "Logout",
     admin: "Admin",
@@ -112,7 +114,8 @@ export const en = {
     emailGateBtn: "Find My Profile",
     emailGateGuest: "Continue without saving",
     welcomeBack: "Welcome back, {name}! Your measurements are loaded.",
-    newProfile: "No saved profile found — we\u2019ll create one after analysis.",
+    newProfile:
+      "No saved profile found — we\u2019ll create one after analysis.",
     Tight: "Tight",
     "Slightly Tight": "Slightly Tight",
     "Perfect Fit": "Perfect Fit",

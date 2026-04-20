@@ -36,6 +36,24 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
             {t("nav.home")}
           </button>
           <button
+            onClick={() => {
+              nav("landing");
+              setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 100);
+            }}
+            className="hover:text-cyan-400 transition"
+          >
+            {t("nav.howItWorks")}
+          </button>
+          <button
+            onClick={() => {
+              nav("landing");
+              setTimeout(() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" }), 100);
+            }}
+            className="hover:text-cyan-400 transition"
+          >
+            {t("nav.features")}
+          </button>
+          <button
             onClick={() => nav("userInfo")}
             className={`hover:text-cyan-400 transition ${currentPage === "userInfo" ? "text-cyan-400" : ""}`}
           >
@@ -112,6 +130,20 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
             label={t("nav.home")}
             active={currentPage === "landing"}
             onClick={() => nav("landing")}
+          />
+          <MobileNavItem
+            label={t("nav.howItWorks")}
+            onClick={() => {
+              nav("landing");
+              setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 100);
+            }}
+          />
+          <MobileNavItem
+            label={t("nav.features")}
+            onClick={() => {
+              nav("landing");
+              setTimeout(() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" }), 100);
+            }}
           />
           <MobileNavItem
             label={t("landing.ctaLabel")}

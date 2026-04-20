@@ -25,9 +25,9 @@ export function Footer({ onNavigate }) {
 
   return (
     <footer className="border-t border-white/10 mt-auto">
-      <div className="max-w-6xl mx-auto px-6 py-12 md:py-14 grid grid-cols-1 md:grid-cols-3 gap-10">
+      <div className="max-w-6xl mx-auto px-6 py-12 md:py-14 grid grid-cols-1 md:grid-cols-2 gap-10">
         {/* Brand */}
-        <div className="md:col-span-1">
+        <div>
           <div className="flex items-center gap-2 mb-4">
             <Shirt className="text-cyan-400" size={20} strokeWidth={1.5} />
             <span className="font-bold tracking-widest text-lg">FITRO</span>
@@ -54,16 +54,6 @@ export function Footer({ onNavigate }) {
               </li>
             ))}
           </ul>
-        </div>
-
-        {/* CTA */}
-        <div className="flex flex-col justify-center">
-          <button
-            onClick={() => onNavigate("userInfo")}
-            className="w-full md:w-auto bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] text-white font-bold px-8 py-4 rounded-full hover:scale-105 transition-transform text-sm"
-          >
-            {t("landing.ctaBandBtn")}
-          </button>
         </div>
       </div>
 

@@ -10,7 +10,8 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "POST") {
-    const { name, gender, height, weight, chest, waist, hips, email } = req.body ?? {};
+    const { name, gender, height, weight, chest, waist, hips, email } =
+      req.body ?? {};
 
     if (!name || !height || !weight) {
       return res
@@ -39,7 +40,7 @@ export default async function handler(req, res) {
         const user = await User.findOneAndUpdate(
           { email: clean },
           { ...data, email: clean },
-          { upsert: true, new: true, setDefaultsOnInsert: true }
+          { upsert: true, new: true, setDefaultsOnInsert: true },
         );
         return res.status(200).json(user);
       }
