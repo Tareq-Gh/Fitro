@@ -13,13 +13,13 @@ export function LandingPage({ onNavigate }) {
   return (
     <div className="w-full">
       {/* Hero */}
-      <section className="text-center px-6 pt-8 pb-20 animate-in slide-in-from-bottom duration-700">
+      <section className="text-center px-4 md:px-6 pt-8 pb-16 md:pb-20 animate-in slide-in-from-bottom duration-700">
         <div className="inline-flex items-center gap-2 border border-white/20 rounded-full py-1.5 px-5 bg-white/5 backdrop-blur-sm text-xs tracking-widest uppercase text-white/60 mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
           {t("landing.badge")}
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-light leading-[1.1] tracking-tight">
+        <h1 className="text-4xl md:text-7xl font-light leading-[1.15] md:leading-[1.1] tracking-tight">
           {t("landing.heroTitle1")}{" "}
           <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-400">
             {t("landing.heroTitle2")}
@@ -28,7 +28,7 @@ export function LandingPage({ onNavigate }) {
           <span className="text-white/50">{t("landing.heroTitle3")}</span>
         </h1>
 
-        <p className="mt-6 text-white/50 text-base md:text-lg max-w-md mx-auto leading-relaxed">
+        <p className="mt-4 md:mt-6 text-white/50 text-sm md:text-lg max-w-md mx-auto leading-relaxed px-2">
           {t("landing.heroSub")}
         </p>
 
@@ -75,11 +75,14 @@ export function LandingPage({ onNavigate }) {
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" className="px-6 py-20 max-w-4xl mx-auto">
+      <section
+        id="how-it-works"
+        className="px-4 md:px-6 py-14 md:py-20 max-w-4xl mx-auto"
+      >
         <p className="text-center text-xs uppercase tracking-[0.3em] text-cyan-400 mb-4">
           {t("landing.howTitle")}
         </p>
-        <h2 className="text-center text-3xl md:text-4xl font-bold mb-14">
+        <h2 className="text-center text-2xl md:text-4xl font-bold mb-10 md:mb-14">
           {t("landing.howSubtitle")}
         </h2>
         <div className="grid md:grid-cols-3 gap-6">
@@ -97,7 +100,10 @@ export function LandingPage({ onNavigate }) {
       </section>
 
       {/* Features */}
-      <section id="features" className="px-6 py-20 max-w-5xl mx-auto">
+      <section
+        id="features"
+        className="px-4 md:px-6 py-14 md:py-20 max-w-5xl mx-auto"
+      >
         <p className="text-center text-xs uppercase tracking-[0.3em] text-cyan-400 mb-4">
           {t("landing.whyTitle")}
         </p>
@@ -131,7 +137,9 @@ export function LandingPage({ onNavigate }) {
           <h2 className="text-2xl md:text-3xl font-bold mb-3">
             {t("landing.ctaBandTitle")}
           </h2>
-          <p className="text-white/50 text-sm mb-7">{t("landing.ctaBandSub")}</p>
+          <p className="text-white/50 text-sm mb-7">
+            {t("landing.ctaBandSub")}
+          </p>
           <button
             onClick={() => onNavigate("userInfo")}
             className="bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] text-white font-bold px-10 py-4 rounded-full hover:scale-105 transition-transform"
