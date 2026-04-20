@@ -5,7 +5,7 @@ import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { UserInfoPage } from "./pages/UserInfoPage";
 import { AdminPage } from "./pages/AdminPage";
-import { LangProvider } from "./context/LangContext"
+import { LangProvider } from "./context/LangContext";
 import { useLang } from "./context/useLang";
 
 function AppContent() {
@@ -68,9 +68,7 @@ function AppContent() {
           isLanding ? "flex-col" : "items-center justify-center"
         }`}
       >
-        {currentPage === "landing" && (
-          <LandingPage onNavigate={navigate} />
-        )}
+        {currentPage === "landing" && <LandingPage onNavigate={navigate} />}
         {currentPage === "login" && <LoginPage onLogin={handleLogin} />}
         {currentPage === "userInfo" && <UserInfoPage />}
         {currentPage === "admin" && token && <AdminPage token={token} />}
