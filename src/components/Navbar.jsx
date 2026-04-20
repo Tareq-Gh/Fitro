@@ -1,5 +1,12 @@
 ﻿import { useState } from "react";
-import { Shirt, LayoutDashboard, LogOut, Menu, X, ChevronRight } from "lucide-react";
+import {
+  Shirt,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  X,
+  ChevronRight,
+} from "lucide-react";
 import { useLang } from "../context/useLang";
 
 export function Navbar({ onNavigate, currentPage, token, onLogout }) {
@@ -24,21 +31,31 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
             size={20}
             strokeWidth={1.5}
           />
-          <span className="font-bold tracking-widest text-lg md:text-xl">FITRO</span>
+          <span className="font-bold tracking-widest text-lg md:text-xl">
+            FITRO
+          </span>
         </div>
 
         {/* Desktop links */}
         <div className="hidden md:flex gap-8 text-xs uppercase tracking-[0.2em] items-center">
           <button
             onClick={() => nav("landing")}
-            className={`hover:text-cyan-400 transition ${currentPage === "landing" ? "text-cyan-400" : ""}`}
+            className={`hover:text-cyan-400 transition ${
+              currentPage === "landing" ? "text-cyan-400" : ""
+            }`}
           >
             {t("nav.home")}
           </button>
           <button
             onClick={() => {
               nav("landing");
-              setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 100);
+              setTimeout(
+                () =>
+                  document
+                    .getElementById("how-it-works")
+                    ?.scrollIntoView({ behavior: "smooth" }),
+                100,
+              );
             }}
             className="hover:text-cyan-400 transition"
           >
@@ -47,7 +64,13 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
           <button
             onClick={() => {
               nav("landing");
-              setTimeout(() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" }), 100);
+              setTimeout(
+                () =>
+                  document
+                    .getElementById("features")
+                    ?.scrollIntoView({ behavior: "smooth" }),
+                100,
+              );
             }}
             className="hover:text-cyan-400 transition"
           >
@@ -55,7 +78,9 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
           </button>
           <button
             onClick={() => nav("userInfo")}
-            className={`hover:text-cyan-400 transition ${currentPage === "userInfo" ? "text-cyan-400" : ""}`}
+            className={`hover:text-cyan-400 transition ${
+              currentPage === "userInfo" ? "text-cyan-400" : ""
+            }`}
           >
             {t("landing.ctaLabel")}
           </button>
@@ -63,7 +88,9 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
             <>
               <button
                 onClick={() => nav("admin")}
-                className={`flex items-center gap-1 hover:text-cyan-400 transition ${currentPage === "admin" ? "text-cyan-400" : ""}`}
+                className={`flex items-center gap-1 hover:text-cyan-400 transition ${
+                  currentPage === "admin" ? "text-cyan-400" : ""
+                }`}
               >
                 <LayoutDashboard size={14} />
                 {t("nav.dashboard")}
@@ -135,14 +162,26 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
             label={t("nav.howItWorks")}
             onClick={() => {
               nav("landing");
-              setTimeout(() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }), 100);
+              setTimeout(
+                () =>
+                  document
+                    .getElementById("how-it-works")
+                    ?.scrollIntoView({ behavior: "smooth" }),
+                100,
+              );
             }}
           />
           <MobileNavItem
             label={t("nav.features")}
             onClick={() => {
               nav("landing");
-              setTimeout(() => document.getElementById("features")?.scrollIntoView({ behavior: "smooth" }), 100);
+              setTimeout(
+                () =>
+                  document
+                    .getElementById("features")
+                    ?.scrollIntoView({ behavior: "smooth" }),
+                100,
+              );
             }}
           />
           <MobileNavItem
@@ -161,7 +200,10 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
               />
               <MobileNavItem
                 label={t("nav.logout")}
-                onClick={() => { setMenuOpen(false); onLogout(); }}
+                onClick={() => {
+                  setMenuOpen(false);
+                  onLogout();
+                }}
                 danger
                 icon={<LogOut size={16} />}
               />
@@ -191,7 +233,9 @@ function MobileNavItem({ label, active, onClick, icon, highlight, danger }) {
         {icon}
         {label}
       </span>
-      {!danger && !highlight && <ChevronRight size={14} className="text-white/30" />}
+      {!danger && !highlight && (
+        <ChevronRight size={14} className="text-white/30" />
+      )}
     </button>
   );
 }

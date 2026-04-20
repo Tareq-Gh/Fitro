@@ -10,26 +10,41 @@ import { useLang } from "./context/useLang";
 
 function AppContent() {
   const { dir, lang } = useLang();
-  const [currentPage, setCurrentPage] = useState("landing");
+
+  const getInitialPage = () => {
+    if (window.location.pathname === "/admin") return "login";
+    return "landing";
+  };
+
+  const [currentPage, setCurrentPage] = useState(getInitialPage);
   const [token, setToken] = useState(
     () => localStorage.getItem("fitro_token") ?? "",
   );
 
+  function navigate(page) {
+    setCurrentPage(page);
+    if (page === "admin" || page === "login") {
+      window.history.pushState(null, "", "/admin");
+    } else {
+      window.history.pushState(null, "", "/");
+    }
+  }
+
   function handleLogin(newToken) {
     localStorage.setItem("fitro_token", newToken);
     setToken(newToken);
-    setCurrentPage("admin");
+    navigate("admin");
   }
 
   function handleLogout() {
     localStorage.removeItem("fitro_token");
     setToken("");
-    setCurrentPage("landing");
+    navigate("landing");
   }
 
   useEffect(() => {
     if (currentPage === "admin" && !token) {
-      setCurrentPage("login");
+      navigate("login");
     }
   }, [currentPage, token]);
 
@@ -43,7 +58,7 @@ function AppContent() {
       }`}
     >
       <Navbar
-        onNavigate={setCurrentPage}
+        onNavigate={navigate}
         currentPage={currentPage}
         token={token}
         onLogout={handleLogout}
@@ -54,13 +69,13 @@ function AppContent() {
         }`}
       >
         {currentPage === "landing" && (
-          <LandingPage onNavigate={setCurrentPage} />
+          <LandingPage onNavigate={navigate} />
         )}
         {currentPage === "login" && <LoginPage onLogin={handleLogin} />}
         {currentPage === "userInfo" && <UserInfoPage />}
         {currentPage === "admin" && token && <AdminPage token={token} />}
       </div>
-      {isLanding && <Footer onNavigate={setCurrentPage} />}
+      {isLanding && <Footer onNavigate={navigate} />}
     </div>
   );
 }
