@@ -9,7 +9,13 @@ import {
 } from "lucide-react";
 import { useLang } from "../context/useLang";
 
-export function Navbar({ onNavigate, currentPage, token, onLogout }) {
+export function Navbar({
+  onNavigate,
+  currentPage,
+  token,
+  onLogout,
+  onAnalyze,
+}) {
   const { t, lang, setLang } = useLang();
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -187,7 +193,10 @@ export function Navbar({ onNavigate, currentPage, token, onLogout }) {
           <MobileNavItem
             label={t("landing.ctaLabel")}
             active={currentPage === "userInfo"}
-            onClick={() => nav("userInfo")}
+            onClick={() => {
+              setMenuOpen(false);
+              onAnalyze?.();
+            }}
             highlight
           />
           {token ? (

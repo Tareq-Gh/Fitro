@@ -3,7 +3,7 @@ import { useLang } from "../context/useLang";
 
 const FEATURE_ICONS = [Ruler, Zap, ShieldCheck, TrendingUp];
 
-export function LandingPage({ onNavigate }) {
+export function LandingPage({ onAnalyze }) {
   const { t } = useLang();
 
   const categories = t("landing.categories");
@@ -45,7 +45,7 @@ export function LandingPage({ onNavigate }) {
 
         {/* CTA Card */}
         <div
-          onClick={() => onNavigate("userInfo")}
+          onClick={onAnalyze}
           className="mt-14 bg-white rounded-[40px] p-10 md:p-14 flex flex-col items-center cursor-pointer hover:bg-gray-50 transition-all group shadow-2xl mx-auto w-fit"
         >
           <div className="relative">
@@ -141,7 +141,7 @@ export function LandingPage({ onNavigate }) {
             {t("landing.ctaBandSub")}
           </p>
           <button
-            onClick={() => onNavigate("userInfo")}
+            onClick={onAnalyze}
             className="bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] text-white font-bold px-10 py-4 rounded-full hover:scale-105 transition-transform"
           >
             {t("landing.ctaBandBtn")}
