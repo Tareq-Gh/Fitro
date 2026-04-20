@@ -1,0 +1,54 @@
+import { User, Lock, LayoutDashboard, LogOut } from "lucide-react";
+
+export function Navbar({ onNavigate, currentPage, token, onLogout }) {
+  return (
+    <nav className="fixed top-0 w-full flex justify-between items-center px-8 py-6 text-white/80 z-50">
+      <div
+        className="font-bold tracking-widest text-2xl cursor-pointer"
+        onClick={() => onNavigate("landing")}
+      >
+        FITRO
+      </div>
+      <div className="hidden md:flex gap-10 text-xs uppercase tracking-[0.2em] items-center">
+        <button
+          onClick={() => onNavigate("landing")}
+          className={`hover:text-cyan-400 transition ${
+            currentPage === "landing" ? "text-cyan-400" : ""
+          }`}
+        >
+          Home
+        </button>
+        {token ? (
+          <>
+            <button
+              onClick={() => onNavigate("admin")}
+              className={`flex items-center gap-1 hover:text-cyan-400 transition ${
+                currentPage === "admin" ? "text-cyan-400" : ""
+              }`}
+            >
+              <LayoutDashboard size={14} />
+              Dashboard
+            </button>
+            <button
+              onClick={onLogout}
+              className="flex items-center gap-1 hover:text-red-400 transition"
+            >
+              <LogOut size={14} />
+              Logout
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={() => onNavigate("login")}
+            className={`flex items-center gap-1 hover:text-cyan-400 transition ${
+              currentPage === "login" ? "text-cyan-400" : ""
+            }`}
+          >
+            <User size={14} />
+            Admin
+          </button>
+        )}
+      </div>
+    </nav>
+  );
+}
