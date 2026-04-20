@@ -1,74 +1,39 @@
-import { Shirt, Ruler, Zap, ShieldCheck, TrendingUp } from "lucide-react";
+﻿import { Shirt, Ruler, Zap, ShieldCheck, TrendingUp } from "lucide-react";
+import { useLang } from "../context/useLang";
 
-const CATEGORIES = ["T-Shirt", "Pants", "Shirt"];
-
-const FEATURES = [
-  {
-    icon: Ruler,
-    title: "Precise Measurement",
-    desc: "Enter your body measurements once and get accurate sizing every time.",
-  },
-  {
-    icon: Zap,
-    title: "Instant Analysis",
-    desc: "Our engine calculates fit ease across chest, waist, and hips in milliseconds.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Multi-Region",
-    desc: "Works with EU, US, IT, TU, and CH sizing standards without confusion.",
-  },
-  {
-    icon: TrendingUp,
-    title: "Material Aware",
-    desc: "Accounts for denim rigidity, polyester stretch, and cotton flexibility.",
-  },
-];
-
-const STEPS = [
-  {
-    num: "01",
-    title: "Enter Your Measurements",
-    desc: "Height, weight, chest, waist, hips.",
-  },
-  {
-    num: "02",
-    title: "Describe the Garment",
-    desc: "Category, material, fit type, and garment measurements.",
-  },
-  {
-    num: "03",
-    title: "Get Your Fit Report",
-    desc: "Tight, Perfect Fit, Loose — with reasoning and advice.",
-  },
-];
+const FEATURE_ICONS = [Ruler, Zap, ShieldCheck, TrendingUp];
 
 export function LandingPage({ onNavigate }) {
+  const { t } = useLang();
+
+  const categories = t("landing.categories");
+  const steps = t("landing.steps");
+  const features = t("landing.features");
+
   return (
     <div className="w-full">
-      {/* ── Hero ── */}
+      {/* Hero */}
       <section className="text-center px-6 pt-8 pb-20 animate-in slide-in-from-bottom duration-700">
         <div className="inline-flex items-center gap-2 border border-white/20 rounded-full py-1.5 px-5 bg-white/5 backdrop-blur-sm text-xs tracking-widest uppercase text-white/60 mb-8">
           <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-          AI-Powered Fit Analysis
+          {t("landing.badge")}
         </div>
 
         <h1 className="text-5xl md:text-7xl font-light leading-[1.1] tracking-tight">
-          Find Your{" "}
+          {t("landing.heroTitle1")}{" "}
           <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-white to-cyan-400">
-            Perfect Fit
+            {t("landing.heroTitle2")}
           </span>
           <br />
-          <span className="text-white/50">Before You Buy</span>
+          <span className="text-white/50">{t("landing.heroTitle3")}</span>
         </h1>
 
         <p className="mt-6 text-white/50 text-base md:text-lg max-w-md mx-auto leading-relaxed">
-          Stop returning clothes that don&apos;t fit. Know your exact fit —
-          Tight, Perfect, or Loose — before checkout.
+          {t("landing.heroSub")}
         </p>
 
         <div className="flex flex-wrap gap-3 justify-center mt-8">
-          {CATEGORIES.map((item) => (
+          {categories.map((item) => (
             <span
               key={item}
               className="px-5 py-1.5 border border-white/15 rounded-full text-[11px] uppercase tracking-widest text-white/60"
@@ -94,10 +59,10 @@ export function LandingPage({ onNavigate }) {
             </div>
           </div>
           <p className="mt-5 text-gray-700 font-semibold text-sm">
-            Analyze My Fit
+            {t("landing.ctaLabel")}
           </p>
           <div className="flex gap-2 mt-3">
-            {["AI Analysis", "Instant", "Free"].map((tag) => (
+            {t("landing.ctaTags").map((tag) => (
               <span
                 key={tag}
                 className="bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider"
@@ -109,16 +74,16 @@ export function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* ── How It Works ── */}
-      <section className="px-6 py-20 max-w-4xl mx-auto">
+      {/* How It Works */}
+      <section id="how-it-works" className="px-6 py-20 max-w-4xl mx-auto">
         <p className="text-center text-xs uppercase tracking-[0.3em] text-cyan-400 mb-4">
-          How It Works
+          {t("landing.howTitle")}
         </p>
         <h2 className="text-center text-3xl md:text-4xl font-bold mb-14">
-          Three steps to perfect fit
+          {t("landing.howSubtitle")}
         </h2>
         <div className="grid md:grid-cols-3 gap-6">
-          {STEPS.map(({ num, title, desc }) => (
+          {steps.map(({ num, title, desc }) => (
             <div
               key={num}
               className="bg-white/5 border border-white/10 rounded-[28px] p-7 hover:border-cyan-500/40 transition-all"
@@ -131,17 +96,17 @@ export function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* ── Features ── */}
-      <section className="px-6 py-20 max-w-5xl mx-auto">
+      {/* Features */}
+      <section id="features" className="px-6 py-20 max-w-5xl mx-auto">
         <p className="text-center text-xs uppercase tracking-[0.3em] text-cyan-400 mb-4">
-          Why FITRO
+          {t("landing.whyTitle")}
         </p>
         <h2 className="text-center text-3xl md:text-4xl font-bold mb-14">
-          Built for precision
+          {t("landing.whySubtitle")}
         </h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {FEATURES.map(({ icon, title, desc }) => {
-            const FeatureIcon = icon;
+          {features.map(({ title, desc }, idx) => {
+            const FeatureIcon = FEATURE_ICONS[idx];
             return (
               <div
                 key={title}
@@ -160,20 +125,18 @@ export function LandingPage({ onNavigate }) {
         </div>
       </section>
 
-      {/* ── CTA Band ── */}
+      {/* CTA Band */}
       <section className="px-6 py-20 text-center">
         <div className="max-w-xl mx-auto bg-white/5 border border-white/10 rounded-[36px] p-10">
           <h2 className="text-2xl md:text-3xl font-bold mb-3">
-            Ready to find your fit?
+            {t("landing.ctaBandTitle")}
           </h2>
-          <p className="text-white/50 text-sm mb-7">
-            It takes less than 2 minutes. No account needed.
-          </p>
+          <p className="text-white/50 text-sm mb-7">{t("landing.ctaBandSub")}</p>
           <button
             onClick={() => onNavigate("userInfo")}
-            className="bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] px-10 py-4 rounded-full font-bold text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
+            className="bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] text-white font-bold px-10 py-4 rounded-full hover:scale-105 transition-transform"
           >
-            Start Analysis
+            {t("landing.ctaBandBtn")}
           </button>
         </div>
       </section>

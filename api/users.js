@@ -18,15 +18,20 @@ export default async function handler(req, res) {
         .json({ error: "Name, height, and weight are required" });
     }
 
+    const toNum = (v) =>
+      v !== undefined && v !== null && !Number.isNaN(Number(v))
+        ? Number(v)
+        : undefined;
+
     try {
       const user = await User.create({
         name,
         gender,
-        height,
-        weight,
-        chest,
-        waist,
-        hips,
+        height: Number(height),
+        weight: Number(weight),
+        chest: toNum(chest),
+        waist: toNum(waist),
+        hips: toNum(hips),
       });
       return res.status(201).json(user);
     } catch {

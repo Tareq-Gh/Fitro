@@ -1,12 +1,49 @@
-import { Shirt } from "lucide-react";
+﻿import { Shirt } from "lucide-react";
+import { useLang } from "../context/useLang";
 
-const LINKS = {
-  Product: ["Fit Analysis", "How It Works", "Size Guide"],
-  Support: ["FAQ", "Contact", "Privacy Policy"],
-};
-
-export function Footer() {
+export function Footer({ onNavigate }) {
+  const { t } = useLang();
   const year = new Date().getFullYear();
+
+  const LINK_SECTIONS = [
+    {
+      titleKey: "footer.product",
+      links: [
+        { key: "footer.fitAnalysis", action: () => onNavigate("userInfo") },
+        {
+          key: "footer.howItWorks",
+          action: () =>
+            document
+              .getElementById("how-it-works")
+              ?.scrollIntoView({ behavior: "smooth" }),
+        },
+        {
+          key: "footer.sizeGuide",
+          action: () =>
+            document
+              .getElementById("features")
+              ?.scrollIntoView({ behavior: "smooth" }),
+        },
+      ],
+    },
+    {
+      titleKey: "footer.support",
+      links: [
+        {
+          key: "footer.faq",
+          action: () => window.scrollTo({ top: 0, behavior: "smooth" }),
+        },
+        {
+          key: "footer.contact",
+          action: () => window.scrollTo({ top: 0, behavior: "smooth" }),
+        },
+        {
+          key: "footer.privacy",
+          action: () => window.scrollTo({ top: 0, behavior: "smooth" }),
+        },
+      ],
+    },
+  ];
 
   return (
     <footer className="border-t border-white/10 mt-auto">
@@ -18,23 +55,25 @@ export function Footer() {
             <span className="font-bold tracking-widest text-lg">FITRO</span>
           </div>
           <p className="text-white/40 text-sm leading-relaxed max-w-[220px]">
-            Know your exact fit before you buy. No more returns, no more
-            guessing.
+            {t("footer.tagline")}
           </p>
         </div>
 
         {/* Links */}
-        {Object.entries(LINKS).map(([section, items]) => (
-          <div key={section}>
+        {LINK_SECTIONS.map(({ titleKey, links }) => (
+          <div key={titleKey}>
             <h4 className="text-xs uppercase tracking-[0.25em] text-white/40 mb-4">
-              {section}
+              {t(titleKey)}
             </h4>
             <ul className="space-y-2">
-              {items.map((item) => (
-                <li key={item}>
-                  <span className="text-white/60 text-sm hover:text-cyan-400 transition-colors cursor-default">
-                    {item}
-                  </span>
+              {links.map(({ key, action }) => (
+                <li key={key}>
+                  <button
+                    onClick={action}
+                    className="text-white/60 text-sm hover:text-cyan-400 transition-colors bg-transparent border-none p-0 cursor-pointer"
+                  >
+                    {t(key)}
+                  </button>
                 </li>
               ))}
             </ul>
@@ -44,8 +83,8 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div className="border-t border-white/10 px-6 py-5 flex flex-col md:flex-row items-center justify-between gap-2 text-white/30 text-xs max-w-6xl mx-auto w-full">
-        <span>© {year} FITRO. All rights reserved.</span>
-        <span>Built with precision for perfect fit.</span>
+        <span>{t("footer.copyright").replace("{year}", year)}</span>
+        <span>{t("footer.builtWith")}</span>
       </div>
     </footer>
   );

@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import {
   User,
   Ruler,
@@ -11,8 +11,12 @@ import {
 } from "lucide-react";
 import { submitUserInfo } from "../services/api";
 import { analyzeFit } from "../utils/fitAnalyzer";
+import { useLang } from "../context/useLang";
 
 const btnGradient = "bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4]";
+
+const parseNum = (v) =>
+  v !== undefined && v !== "" ? Number(v) : undefined;
 
 const FIT_COLORS = {
   Tight: {
@@ -91,6 +95,7 @@ function Select({ label, value, onChange, options, required }) {
 }
 
 export function UserInfoPage() {
+  const { t, lang } = useLang();
   const [step, setStep] = useState(1);
   const [body, setBody] = useState({});
   const [product, setProduct] = useState({});
@@ -119,9 +124,9 @@ export function UserInfoPage() {
         height: Number(body.height_cm),
         weight: Number(body.weight_kg),
         gender: body.gender,
-        chest: Number(body.chest_cm),
-        waist: Number(body.waist_cm),
-        hips: Number(body.hips_cm),
+        chest: parseNum(body.chest_cm),
+        waist: parseNum(body.waist_cm),
+        hips: parseNum(body.hips_cm),
       });
       setResult(
         analyzeFit({
@@ -150,7 +155,7 @@ export function UserInfoPage() {
         }),
       );
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("userInfo.error"));
     } finally {
       setLoading(false);
     }
@@ -160,6 +165,13 @@ export function UserInfoPage() {
     const isPants = product.category === "pants";
     const fitStyle = FIT_COLORS[result.fit_result] ?? FIT_COLORS["Comfortable"];
     const FitIcon = fitStyle.icon;
+
+    const categoryLabel = isPants
+      ? t("userInfo.pants")
+      : product.category === "tshirt"
+      ? t("userInfo.tshirt")
+      : t("userInfo.shirt");
+
     return (
       <div className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[480px] animate-in fade-in zoom-in duration-500 mx-4">
         <div className="text-center mb-6">
@@ -172,14 +184,11 @@ export function UserInfoPage() {
           >
             <FitIcon className={fitStyle.iconColor} size={32} />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800">Fit Analysis</h2>
+          <h2 className="text-2xl font-bold text-gray-800">
+            {t("userInfo.resultTitle")}
+          </h2>
           <p className="text-gray-400 text-sm mt-1">
-            {isPants
-              ? "Pants"
-              : product.category === "tshirt"
-              ? "T-Shirt"
-              : "Shirt"}{" "}
-            · {product.size_label} · {product.region}
+            {categoryLabel} · {product.size_label} · {product.region}
           </p>
         </div>
 
@@ -187,20 +196,20 @@ export function UserInfoPage() {
           <span
             className={`px-5 py-2 rounded-full text-sm font-bold ${fitStyle.badge}`}
           >
-            {result.fit_result}
+            {t(`userInfo.${result.fit_result}`)}
           </span>
           <span
             className={`px-3 py-2 rounded-full text-xs font-medium ${
               CONFIDENCE_COLORS[result.confidence]
             }`}
           >
-            {result.confidence} Confidence
+            {t(`userInfo.${result.confidence}`)} {t("userInfo.confidence")}
           </span>
         </div>
 
         <div className="bg-gray-50 rounded-2xl p-4 mb-4">
           <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-semibold">
-            Analysis
+            {t("userInfo.analysisLabel")}
           </p>
           <p className="text-gray-700 text-sm leading-relaxed">
             {result.explanation}
@@ -209,7 +218,7 @@ export function UserInfoPage() {
 
         <div className="border border-cyan-100 bg-cyan-50 rounded-2xl p-4 mb-6">
           <p className="text-xs text-cyan-500 uppercase tracking-wider mb-2 font-semibold">
-            Our Advice
+            {t("userInfo.adviceLabel")}
           </p>
           <p className="text-gray-700 text-sm leading-relaxed">
             {result.advice}
@@ -226,11 +235,14 @@ export function UserInfoPage() {
           }}
           className={`w-full py-3 rounded-full ${btnGradient} text-white font-bold`}
         >
-          New Analysis
+          {t("userInfo.newAnalysis")}
         </button>
       </div>
     );
   }
+
+  const BackIcon = lang === "ar" ? ChevronRight : ChevronLeft;
+  const NextIcon = lang === "ar" ? ChevronLeft : ChevronRight;
 
   return (
     <div className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[440px] animate-in fade-in zoom-in duration-500 mx-4">
@@ -246,7 +258,7 @@ export function UserInfoPage() {
           ))}
         </div>
         <span className="text-xs text-gray-400 uppercase tracking-wider">
-          Step {step} / 2
+          {t("userInfo.stepLabel")} {step} {t("userInfo.stepOf")} 2
         </span>
       </div>
 
@@ -263,32 +275,30 @@ export function UserInfoPage() {
               <User className="text-white" size={26} />
             </div>
             <h2 className="text-xl font-bold text-gray-800">
-              Your Measurements
+              {t("userInfo.step1Title")}
             </h2>
-            <p className="text-gray-400 text-xs mt-1">
-              Body measurements in centimeters
-            </p>
+            <p className="text-gray-400 text-xs mt-1">{t("userInfo.step1Sub")}</p>
           </div>
 
           <Field
-            label="Full Name"
+            label={t("userInfo.name")}
             value={body.name}
             onChange={(v) => setBodyField("name", v)}
             required
           />
           <div className="grid grid-cols-2 gap-3">
             <Select
-              label="Gender"
+              label={t("userInfo.gender")}
               value={body.gender}
               onChange={(v) => setBodyField("gender", v)}
               required
               options={[
-                { value: "male", label: "Male" },
-                { value: "female", label: "Female" },
+                { value: "male", label: t("userInfo.male") },
+                { value: "female", label: t("userInfo.female") },
               ]}
             />
             <Field
-              label="Height (cm)"
+              label={t("userInfo.height")}
               type="number"
               value={body.height_cm}
               onChange={(v) => setBodyField("height_cm", v)}
@@ -296,26 +306,26 @@ export function UserInfoPage() {
             />
           </div>
           <Field
-            label="Weight (kg)"
+            label={t("userInfo.weight")}
             type="number"
             value={body.weight_kg}
             onChange={(v) => setBodyField("weight_kg", v)}
             required
           />
           <Field
-            label="Chest (cm)"
+            label={t("userInfo.chest")}
             type="number"
             value={body.chest_cm}
             onChange={(v) => setBodyField("chest_cm", v)}
           />
           <Field
-            label="Waist (cm)"
+            label={t("userInfo.waist")}
             type="number"
             value={body.waist_cm}
             onChange={(v) => setBodyField("waist_cm", v)}
           />
           <Field
-            label="Hips (cm)"
+            label={t("userInfo.hips")}
             type="number"
             value={body.hips_cm}
             onChange={(v) => setBodyField("hips_cm", v)}
@@ -325,7 +335,7 @@ export function UserInfoPage() {
             type="submit"
             className={`w-full mt-2 py-3.5 rounded-full ${btnGradient} text-white font-bold flex items-center justify-center gap-2`}
           >
-            Next <ChevronRight size={18} />
+            {t("userInfo.next")} <NextIcon size={18} />
           </button>
         </form>
       )}
@@ -336,26 +346,28 @@ export function UserInfoPage() {
             <div className="w-14 h-14 bg-[#1e293b] rounded-full flex items-center justify-center mb-3 shadow-xl">
               <Shirt className="text-white" size={26} />
             </div>
-            <h2 className="text-xl font-bold text-gray-800">Garment Details</h2>
+            <h2 className="text-xl font-bold text-gray-800">
+              {t("userInfo.step2Title")}
+            </h2>
             <p className="text-gray-400 text-xs mt-1">
-              Tell us about the item you want to check
+              {t("userInfo.step2Sub")}
             </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <Select
-              label="Category"
+              label={t("userInfo.category")}
               value={product.category}
               onChange={(v) => setProductField("category", v)}
               required
               options={[
-                { value: "tshirt", label: "T-Shirt" },
-                { value: "shirt", label: "Shirt" },
-                { value: "pants", label: "Pants" },
+                { value: "tshirt", label: t("userInfo.tshirt") },
+                { value: "shirt", label: t("userInfo.shirt") },
+                { value: "pants", label: t("userInfo.pants") },
               ]}
             />
             <Select
-              label="Region"
+              label={t("userInfo.region")}
               value={product.region}
               onChange={(v) => setProductField("region", v)}
               required
@@ -370,41 +382,41 @@ export function UserInfoPage() {
           </div>
           <div className="grid grid-cols-2 gap-3">
             <Select
-              label="Fit Type"
+              label={t("userInfo.fitType")}
               value={product.fit_type}
               onChange={(v) => setProductField("fit_type", v)}
               required
               options={[
-                { value: "slim", label: "Slim" },
-                { value: "regular", label: "Regular" },
-                { value: "oversized", label: "Oversized" },
+                { value: "slim", label: t("userInfo.slim") },
+                { value: "regular", label: t("userInfo.regular") },
+                { value: "oversized", label: t("userInfo.oversized") },
               ]}
             />
             <Select
-              label="Material"
+              label={t("userInfo.material")}
               value={product.material}
               onChange={(v) => setProductField("material", v)}
               required
               options={[
-                { value: "cotton", label: "Cotton" },
-                { value: "polyester", label: "Polyester" },
-                { value: "denim", label: "Denim" },
-                { value: "mixed", label: "Mixed" },
+                { value: "cotton", label: t("userInfo.cotton") },
+                { value: "polyester", label: t("userInfo.polyester") },
+                { value: "denim", label: t("userInfo.denim") },
+                { value: "mixed", label: t("userInfo.mixed") },
               ]}
             />
           </div>
           <Field
-            label="Size Label (e.g. M, L, 32)"
+            label={t("userInfo.sizeLabel")}
             value={product.size_label}
             onChange={(v) => setProductField("size_label", v)}
           />
 
           <p className="text-xs text-gray-400 uppercase tracking-wider pt-2 font-semibold">
-            Garment Measurements
+            {t("userInfo.garmentMeasurements")}
           </p>
           {product.category !== "pants" && (
             <Field
-              label="Garment Chest (cm)"
+              label={t("userInfo.garmentChest")}
               type="number"
               value={garment.chest_cm}
               onChange={(v) => setGarmentField("chest_cm", v)}
@@ -414,20 +426,20 @@ export function UserInfoPage() {
           {product.category === "pants" && (
             <>
               <Field
-                label="Garment Waist (cm)"
+                label={t("userInfo.garmentWaist")}
                 type="number"
                 value={garment.waist_cm}
                 onChange={(v) => setGarmentField("waist_cm", v)}
                 required
               />
               <Field
-                label="Garment Hips (cm)"
+                label={t("userInfo.garmentHips")}
                 type="number"
                 value={garment.hips_cm}
                 onChange={(v) => setGarmentField("hips_cm", v)}
               />
               <Field
-                label="Thigh (cm)"
+                label={t("userInfo.thigh")}
                 type="number"
                 value={garment.thigh_cm}
                 onChange={(v) => setGarmentField("thigh_cm", v)}
@@ -435,7 +447,7 @@ export function UserInfoPage() {
             </>
           )}
           <Field
-            label="Length (cm)"
+            label={t("userInfo.length")}
             type="number"
             value={garment.length_cm}
             onChange={(v) => setGarmentField("length_cm", v)}
@@ -449,14 +461,14 @@ export function UserInfoPage() {
               onClick={() => setStep(1)}
               className="flex-shrink-0 py-3.5 px-5 rounded-full border border-gray-200 text-gray-600 font-bold flex items-center gap-1 hover:bg-gray-50 transition"
             >
-              <ChevronLeft size={18} />
+              <BackIcon size={18} />
             </button>
             <button
               type="submit"
               disabled={loading}
               className={`flex-1 py-3.5 rounded-full ${btnGradient} text-white font-bold disabled:opacity-60`}
             >
-              {loading ? "Analyzing..." : "Analyze Fit"}
+              {loading ? t("userInfo.analyzing") : t("userInfo.analyze")}
             </button>
           </div>
         </form>

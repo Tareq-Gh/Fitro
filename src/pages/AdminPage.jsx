@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Users, Activity, Ruler, ShoppingBag, Search } from 'lucide-react';
 import { getUsers } from '../services/api';
+import { useLang } from '../context/useLang';
 
 export function AdminPage({ token }) {
+  const { t } = useLang();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -11,9 +13,9 @@ export function AdminPage({ token }) {
   useEffect(() => {
     getUsers(token)
       .then(({ data }) => setUsers(data))
-      .catch(() => setError('Failed to load users'))
+      .catch(() => setError(t('admin.loadError')))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, [token, t]);
 
   const filtered = users.filter((u) =>
     u.name.toLowerCase().includes(search.toLowerCase())
@@ -24,10 +26,17 @@ export function AdminPage({ token }) {
     : 0;
 
   const stats = [
-    { label: 'Total Users', value: users.length, icon: Users, color: 'text-blue-400' },
-    { label: "Today's Analyses", value: users.filter(u => new Date(u.createdAt).toDateString() === new Date().toDateString()).length, icon: Activity, color: 'text-cyan-400' },
-    { label: 'Avg Height', value: avgHeight ? `${avgHeight} cm` : '—', icon: Ruler, color: 'text-purple-400' },
-    { label: 'Measurements', value: users.length, icon: ShoppingBag, color: 'text-emerald-400' },
+    { label: t('admin.totalUsers'), value: users.length, icon: Users, color: 'text-blue-400' },
+    {
+      label: t('admin.todayAnalyses'),
+      value: users.filter(
+        (u) => new Date(u.createdAt).toDateString() === new Date().toDateString()
+      ).length,
+      icon: Activity,
+      color: 'text-cyan-400',
+    },
+    { label: t('admin.avgHeight'), value: avgHeight ? `${avgHeight} cm` : '—', icon: Ruler, color: 'text-purple-400' },
+    { label: t('admin.measurements'), value: users.length, icon: ShoppingBag, color: 'text-emerald-400' },
   ];
 
   return (
@@ -37,15 +46,15 @@ export function AdminPage({ token }) {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
           <input
             type="text"
-            placeholder="Search..."
+            placeholder={t('admin.search')}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full bg-white/5 border border-white/10 rounded-full py-2 pl-10 pr-4 outline-none focus:border-cyan-500 transition"
           />
         </div>
         <div className="order-1 md:order-2">
-          <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-          <p className="text-cyan-400 text-sm">FITRO User Management</p>
+          <h1 className="text-3xl font-bold text-white">{t('admin.title')}</h1>
+          <p className="text-cyan-400 text-sm">{t('admin.subtitle')}</p>
         </div>
       </div>
 
@@ -61,7 +70,7 @@ export function AdminPage({ token }) {
 
       <div className="bg-white/5 backdrop-blur-md rounded-[35px] border border-white/10 overflow-hidden">
         {loading && (
-          <p className="text-center text-gray-400 py-12">Loading...</p>
+          <p className="text-center text-gray-400 py-12">{t('admin.loading')}</p>
         )}
         {error && (
           <p className="text-center text-red-400 py-12">{error}</p>
@@ -71,17 +80,19 @@ export function AdminPage({ token }) {
             <table className="w-full text-left">
               <thead className="bg-white/5 text-gray-400 text-xs uppercase">
                 <tr>
-                  <th className="p-5">Name</th>
-                  <th className="p-5">Height</th>
-                  <th className="p-5">Weight</th>
-                  <th className="p-5">Chest</th>
-                  <th className="p-5">Date</th>
+                  <th className="p-5">{t('admin.colName')}</th>
+                  <th className="p-5">{t('admin.colHeight')}</th>
+                  <th className="p-5">{t('admin.colWeight')}</th>
+                  <th className="p-5">{t('admin.colChest')}</th>
+                  <th className="p-5">{t('admin.colDate')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-gray-500">No users found</td>
+                    <td colSpan={5} className="p-8 text-center text-gray-500">
+                      {t('admin.noUsers')}
+                    </td>
                   </tr>
                 ) : (
                   filtered.map((user) => (
@@ -90,7 +101,9 @@ export function AdminPage({ token }) {
                       <td className="p-5 text-gray-300">{user.height} cm</td>
                       <td className="p-5 text-gray-300">{user.weight} kg</td>
                       <td className="p-5 text-gray-300">{user.chest ?? '—'} cm</td>
-                      <td className="p-5 text-gray-400">{new Date(user.createdAt).toLocaleDateString()}</td>
+                      <td className="p-5 text-gray-400">
+                        {new Date(user.createdAt).toLocaleDateString()}
+                      </td>
                     </tr>
                   ))
                 )}

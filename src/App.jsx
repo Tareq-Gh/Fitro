@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { UserInfoPage } from "./pages/UserInfoPage";
 import { AdminPage } from "./pages/AdminPage";
+import { LangProvider } from "./context/LangContext"
+import { useLang } from "./context/useLang";
 
-export default function App() {
+function AppContent() {
+  const { dir, lang } = useLang();
   const [currentPage, setCurrentPage] = useState("landing");
   const [token, setToken] = useState(
     () => localStorage.getItem("fitro_token") ?? "",
@@ -33,7 +36,12 @@ export default function App() {
   const isLanding = currentPage === "landing";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#16203a] to-[#2d3a5a] text-white flex flex-col relative overflow-hidden font-sans">
+    <div
+      dir={dir}
+      className={`min-h-screen bg-gradient-to-br from-[#0a0f1e] via-[#16203a] to-[#2d3a5a] text-white flex flex-col relative overflow-hidden ${
+        lang === "ar" ? "font-arabic" : "font-sans"
+      }`}
+    >
       <Navbar
         onNavigate={setCurrentPage}
         currentPage={currentPage}
@@ -52,7 +60,15 @@ export default function App() {
         {currentPage === "userInfo" && <UserInfoPage />}
         {currentPage === "admin" && token && <AdminPage token={token} />}
       </div>
-      {isLanding && <Footer />}
+      {isLanding && <Footer onNavigate={setCurrentPage} />}
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LangProvider>
+      <AppContent />
+    </LangProvider>
   );
 }
