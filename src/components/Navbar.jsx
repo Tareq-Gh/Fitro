@@ -1,250 +1,186 @@
 ﻿import { useState } from "react";
 import {
   Shirt,
-  LayoutDashboard,
+  UserCircle2,
+  Languages,
+  ChevronDown,
   LogOut,
-  Menu,
-  X,
-  ChevronRight,
 } from "lucide-react";
 import { useLang } from "../context/useLang";
 
 export function Navbar({
   onNavigate,
-  currentPage,
-  token,
-  onLogout,
-  onAnalyze,
+  onUserLogin,
+  userProfile,
+  onOpenProfileForm,
+  onUserLogout,
 }) {
   const { t, lang, setLang } = useLang();
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [openUserMenu, setOpenUserMenu] = useState(false);
 
   function nav(page) {
-    setMenuOpen(false);
     onNavigate(page);
   }
 
   return (
     <>
-      <nav className="fixed top-0 w-full flex justify-between items-center px-6 md:px-8 py-4 md:py-6 text-white/80 z-50 backdrop-blur-sm">
-        {/* Logo */}
-        <div
-          className="flex items-center gap-2 cursor-pointer group"
-          onClick={() => nav("landing")}
-        >
-          <Shirt
-            className="text-cyan-400 group-hover:scale-110 transition-transform"
-            size={20}
-            strokeWidth={1.5}
-          />
-          <span className="font-bold tracking-widest text-lg md:text-xl">
-            FITRO
-          </span>
-        </div>
-
-        {/* Desktop links */}
-        <div className="hidden md:flex gap-8 text-xs uppercase tracking-[0.2em] items-center">
-          <button
+      <nav className="fixed inset-x-0 top-0 z-50 text-white/80 backdrop-blur-sm bg-[#0b1530]/55 border-b border-white/10">
+        <div className="relative max-w-7xl mx-auto flex justify-between items-center px-6 md:px-8 py-4 md:py-6">
+          {/* Logo */}
+          <div
+            className="flex items-center gap-2 cursor-pointer group"
             onClick={() => nav("landing")}
-            className={`hover:text-cyan-400 transition ${
-              currentPage === "landing" ? "text-cyan-400" : ""
-            }`}
           >
-            {t("nav.home")}
-          </button>
-          <button
-            onClick={() => {
-              nav("landing");
-              setTimeout(
-                () =>
-                  document
-                    .getElementById("how-it-works")
-                    ?.scrollIntoView({ behavior: "smooth" }),
-                100,
-              );
-            }}
-            className="hover:text-cyan-400 transition"
-          >
-            {t("nav.howItWorks")}
-          </button>
-          <button
-            onClick={() => {
-              nav("landing");
-              setTimeout(
-                () =>
-                  document
-                    .getElementById("features")
-                    ?.scrollIntoView({ behavior: "smooth" }),
-                100,
-              );
-            }}
-            className="hover:text-cyan-400 transition"
-          >
-            {t("nav.features")}
-          </button>
-          <button
-            onClick={() => nav("userInfo")}
-            className={`hover:text-cyan-400 transition ${
-              currentPage === "userInfo" ? "text-cyan-400" : ""
-            }`}
-          >
-            {t("landing.ctaLabel")}
-          </button>
-          {token ? (
-            <>
-              <button
-                onClick={() => nav("admin")}
-                className={`flex items-center gap-1 hover:text-cyan-400 transition ${
-                  currentPage === "admin" ? "text-cyan-400" : ""
-                }`}
-              >
-                <LayoutDashboard size={14} />
-                {t("nav.dashboard")}
-              </button>
-              <button
-                onClick={onLogout}
-                className="flex items-center gap-1 hover:text-red-400 transition"
-              >
-                <LogOut size={14} />
-                {t("nav.logout")}
-              </button>
-            </>
-          ) : null}
-          <button
-            onClick={() => setLang(lang === "en" ? "ar" : "en")}
-            className="hover:text-cyan-400 transition font-bold normal-case tracking-normal border border-white/20 rounded-full px-3 py-1 text-xs"
-            title="Switch language"
-          >
-            {lang === "en" ? "ع" : "EN"}
-          </button>
-        </div>
+            <Shirt
+              className="text-cyan-400 group-hover:scale-110 transition-transform"
+              size={20}
+              strokeWidth={1.5}
+            />
+            <span className="font-bold tracking-widest text-lg md:text-xl">
+              FITRO
+            </span>
+          </div>
 
-        {/* Mobile right side */}
-        <div className="flex md:hidden items-center gap-3">
-          <button
-            onClick={() => setLang(lang === "en" ? "ar" : "en")}
-            className="text-white/60 border border-white/20 rounded-full px-2.5 py-1 text-xs font-bold"
-          >
-            {lang === "en" ? "ع" : "EN"}
-          </button>
-          <button
-            onClick={() => setMenuOpen((o) => !o)}
-            className="text-white/80 hover:text-white transition p-1"
-            aria-label="Toggle menu"
-          >
-            {menuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          {/* Center links */}
+          <div className="hidden md:flex items-center gap-8 text-sm tracking-[0.18em] uppercase absolute left-1/2 -translate-x-1/2">
+            <button
+              onClick={() => nav("landing")}
+              className="cursor-pointer hover:text-cyan-300 transition"
+            >
+              {t("nav.home")}
+            </button>
+            <button
+              onClick={() => {
+                nav("landing");
+                setTimeout(
+                  () =>
+                    document
+                      .getElementById("how-it-works")
+                      ?.scrollIntoView({ behavior: "smooth" }),
+                  100,
+                );
+              }}
+              className="cursor-pointer hover:text-cyan-300 transition"
+            >
+              {t("nav.howItWorks")}
+            </button>
+            <button
+              onClick={() => {
+                nav("landing");
+                setTimeout(
+                  () =>
+                    document
+                      .getElementById("features")
+                      ?.scrollIntoView({ behavior: "smooth" }),
+                  100,
+                );
+              }}
+              className="cursor-pointer hover:text-cyan-300 transition"
+            >
+              {t("nav.whyFitro")}
+            </button>
+          </div>
+
+          {/* Header actions */}
+          <div className="relative flex items-center gap-3 md:gap-4 text-xs uppercase tracking-[0.12em]">
+            {!userProfile ? (
+              <button
+                onClick={onUserLogin}
+                className="cursor-pointer inline-flex items-center gap-2 border border-white/20 rounded-full px-3.5 py-1.5 hover:border-cyan-400/60 hover:text-cyan-300 transition"
+              >
+                <UserCircle2 size={15} />
+                <span>{t("login.loginBtn")}</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => setOpenUserMenu((v) => !v)}
+                className="cursor-pointer inline-flex items-center gap-2 border border-cyan-400/40 rounded-full px-3.5 py-1.5 text-cyan-300 bg-cyan-500/10 hover:bg-cyan-500/20 transition normal-case tracking-normal"
+              >
+                <UserCircle2 size={16} />
+                <span className="max-w-[110px] truncate">
+                  {userProfile.name || userProfile.email}
+                </span>
+                <ChevronDown
+                  size={14}
+                  className={`transition-transform ${
+                    openUserMenu ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
+            )}
+            <button
+              onClick={() => setLang(lang === "en" ? "ar" : "en")}
+              className="cursor-pointer inline-flex items-center gap-2 border border-white/20 rounded-full px-3.5 py-1.5 hover:border-cyan-400/60 hover:text-cyan-300 transition normal-case tracking-normal"
+              title="Switch language"
+            >
+              <Languages size={15} />
+              <span>{lang === "en" ? "Arabic" : "English"}</span>
+            </button>
+
+            {userProfile && openUserMenu && (
+              <div className="absolute top-full right-0 mt-3 w-80 bg-[#0f1d3a] border border-white/15 rounded-2xl p-4 shadow-2xl text-white/80 normal-case tracking-normal z-[60]">
+                <p className="text-[11px] text-white/40 uppercase tracking-wider mb-2">
+                  User Profile
+                </p>
+                <div className="space-y-1.5 text-sm mb-3">
+                  <p>
+                    <span className="text-white/45">Email:</span>{" "}
+                    {userProfile.email || "-"}
+                  </p>
+                  <p>
+                    <span className="text-white/45">Name:</span>{" "}
+                    {userProfile.name || "-"}
+                  </p>
+                  {userProfile.hasMeasurements ? (
+                    <>
+                      <p>
+                        <span className="text-white/45">Height:</span>{" "}
+                        {userProfile.body?.height_cm || "-"} cm
+                      </p>
+                      <p>
+                        <span className="text-white/45">Weight:</span>{" "}
+                        {userProfile.body?.weight_kg || "-"} kg
+                      </p>
+                      <p>
+                        <span className="text-white/45">
+                          Chest / Waist / Hips:
+                        </span>{" "}
+                        {userProfile.body?.chest_cm || "-"} /{" "}
+                        {userProfile.body?.waist_cm || "-"} /{" "}
+                        {userProfile.body?.hips_cm || "-"}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-amber-300 text-xs">No body data yet.</p>
+                  )}
+                </div>
+                <div className="flex gap-2">
+                  {!userProfile.hasMeasurements && (
+                    <button
+                      onClick={() => {
+                        setOpenUserMenu(false);
+                        onOpenProfileForm?.();
+                      }}
+                      className="cursor-pointer flex-1 bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] text-white text-xs font-bold rounded-full px-3 py-2"
+                    >
+                      Fill User Data
+                    </button>
+                  )}
+                  <button
+                    onClick={() => {
+                      setOpenUserMenu(false);
+                      onUserLogout?.();
+                    }}
+                    className="cursor-pointer inline-flex items-center gap-1 border border-red-400/30 text-red-300 text-xs rounded-full px-3 py-2 hover:bg-red-500/10"
+                  >
+                    <LogOut size={12} /> Logout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </nav>
-
-      {/* Mobile overlay */}
-      {menuOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
-          onClick={() => setMenuOpen(false)}
-        />
-      )}
-
-      {/* Mobile drawer */}
-      <div
-        className={`fixed top-0 right-0 h-full w-72 z-50 bg-[#0d1b2e] border-l border-white/10 flex flex-col pt-20 pb-8 px-6 transition-transform duration-300 md:hidden ${
-          menuOpen ? "translate-x-0" : "translate-x-full"
-        }`}
-      >
-        <button
-          onClick={() => setMenuOpen(false)}
-          className="absolute top-5 right-5 text-white/50 hover:text-white transition"
-        >
-          <X size={20} />
-        </button>
-
-        <div className="flex flex-col gap-1.5">
-          <MobileNavItem
-            label={t("nav.home")}
-            active={currentPage === "landing"}
-            onClick={() => nav("landing")}
-          />
-          <MobileNavItem
-            label={t("nav.howItWorks")}
-            onClick={() => {
-              nav("landing");
-              setTimeout(
-                () =>
-                  document
-                    .getElementById("how-it-works")
-                    ?.scrollIntoView({ behavior: "smooth" }),
-                100,
-              );
-            }}
-          />
-          <MobileNavItem
-            label={t("nav.features")}
-            onClick={() => {
-              nav("landing");
-              setTimeout(
-                () =>
-                  document
-                    .getElementById("features")
-                    ?.scrollIntoView({ behavior: "smooth" }),
-                100,
-              );
-            }}
-          />
-          <MobileNavItem
-            label={t("landing.ctaLabel")}
-            active={currentPage === "userInfo"}
-            onClick={() => {
-              setMenuOpen(false);
-              onAnalyze?.();
-            }}
-            highlight
-          />
-          {token ? (
-            <>
-              <MobileNavItem
-                label={t("nav.dashboard")}
-                active={currentPage === "admin"}
-                onClick={() => nav("admin")}
-                icon={<LayoutDashboard size={16} />}
-              />
-              <MobileNavItem
-                label={t("nav.logout")}
-                onClick={() => {
-                  setMenuOpen(false);
-                  onLogout();
-                }}
-                danger
-                icon={<LogOut size={16} />}
-              />
-            </>
-          ) : null}
-        </div>
-      </div>
     </>
-  );
-}
-
-function MobileNavItem({ label, active, onClick, icon, highlight, danger }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-center justify-between w-full rounded-2xl px-4 py-3.5 text-sm font-medium transition-all ${
-        highlight
-          ? "bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] text-white"
-          : danger
-          ? "text-red-400 hover:bg-red-500/10"
-          : active
-          ? "bg-white/10 text-cyan-400"
-          : "text-white/70 hover:bg-white/5 hover:text-white"
-      }`}
-    >
-      <span className="flex items-center gap-2">
-        {icon}
-        {label}
-      </span>
-      {!danger && !highlight && (
-        <ChevronRight size={14} className="text-white/30" />
-      )}
-    </button>
   );
 }

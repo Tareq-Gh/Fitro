@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+﻿import { useState, useRef } from "react";
 import {
   User,
   Ruler,
@@ -11,8 +11,10 @@ import {
   Mail,
   FileText,
   Sparkles,
+  Camera,
+  Upload,
 } from "lucide-react";
-import { submitUserInfo, lookupByEmail } from "../services/api";
+import { submitUserInfo, lookupByEmail, submitTryOn } from "../services/api";
 import { analyzeFit } from "../utils/fitAnalyzer";
 import { useLang } from "../context/useLang";
 
@@ -102,30 +104,81 @@ function BtnGroup({ label, options, value, onChange }) {
   );
 }
 
+function ImageUploadBox({ label, hint, preview, onChange, required }) {
+  const inputRef = useRef(null);
+  const { t } = useLang();
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">
+        {label}
+        {required && <span className="text-red-400 ml-0.5">*</span>}
+      </p>
+      <div
+        onClick={() => inputRef.current?.click()}
+        className={`relative cursor-pointer rounded-2xl border-2 border-dashed transition-all overflow-hidden flex flex-col items-center justify-center min-h-[150px] ${
+          preview
+            ? "border-cyan-300"
+            : "border-gray-200 bg-gray-50 hover:border-cyan-300 hover:bg-cyan-50/30"
+        }`}
+      >
+        {preview ? (
+          <>
+            <img
+              src={preview}
+              alt=""
+              className="w-full h-[150px] object-cover"
+            />
+            <div className="absolute bottom-2 right-2 bg-white/90 rounded-full px-2 py-0.5 text-[10px] text-gray-600 font-medium shadow">
+              {t("userInfo.changePhoto")}
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center gap-2 p-4 text-center">
+            <Upload size={22} className="text-gray-300" />
+            <span className="text-xs text-gray-400 leading-relaxed">
+              {hint}
+            </span>
+          </div>
+        )}
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+        />
+      </div>
+    </div>
+  );
+}
+
 export function UserInfoPage({
   initialPhase = "email",
   initialWelcome = null,
+  onProfileSaved,
 }) {
   const { t, lang } = useLang();
   const [phase, setPhase] = useState(initialPhase);
   const [mode, setMode] = useState(null);
   const [email, setEmail] = useState(
-    () => localStorage.getItem("fitro_email") ?? "",
+    () => sessionStorage.getItem("fitro_email") ?? "",
   );
   const [welcomeBack, setWelcomeBack] = useState(initialWelcome);
   const [lookupLoading, setLookupLoading] = useState(false);
-  const [body, setBody] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("fitro_body") ?? "{}");
-    } catch {
-      return {};
-    }
-  });
+  const [body, setBody] = useState({});
   const [product, setProduct] = useState({});
   const [garment, setGarment] = useState({});
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [images, setImages] = useState({
+    body: null,
+    garment: null,
+    bodyPreview: null,
+    garmentPreview: null,
+  });
+  const [tryOnImage, setTryOnImage] = useState(null);
+  const [imagesLoading, setImagesLoading] = useState(false);
 
   const setBodyField = (k, v) => setBody((p) => ({ ...p, [k]: v }));
   const setProductField = (k, v) => setProduct((p) => ({ ...p, [k]: v }));
@@ -138,7 +191,7 @@ export function UserInfoPage({
     setLookupLoading(true);
     try {
       const { data } = await lookupByEmail(email);
-      localStorage.setItem("fitro_email", email);
+      sessionStorage.setItem("fitro_email", email);
       if (data.found) {
         const u = data.user;
         setBody({
@@ -169,13 +222,22 @@ export function UserInfoPage({
       !product.category ||
       !product.region ||
       !product.fit_type ||
-      !product.material
+      !product.material ||
+      !product.size_label
     ) {
       setError(t("userInfo.selectAll"));
       return;
     }
     setError("");
+
+    // IMAGE_AND_REPORT: go to photo upload step first
+    if (mode === "IMAGE_AND_REPORT") {
+      setPhase("images");
+      return;
+    }
+
     setLoading(true);
+    let saveFailed = false;
     try {
       await submitUserInfo({
         email: email || undefined,
@@ -187,8 +249,12 @@ export function UserInfoPage({
         waist: parseNum(body.waist_cm),
         hips: parseNum(body.hips_cm),
       });
-      localStorage.setItem("fitro_body", JSON.stringify(body));
-      if (email) localStorage.setItem("fitro_email", email);
+    } catch {
+      saveFailed = true;
+    }
+
+    try {
+      if (email) sessionStorage.setItem("fitro_email", email);
       setResult(
         analyzeFit({
           user: {
@@ -215,10 +281,99 @@ export function UserInfoPage({
           },
         }),
       );
+      if (saveFailed) {
+        setError(t("userInfo.saveWarning"));
+      }
     } catch {
       setError(t("userInfo.error"));
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function handleTryOnAnalyze() {
+    if (!images.garment) {
+      setError(t("userInfo.garmentPhotoRequired"));
+      return;
+    }
+    setError("");
+    setImagesLoading(true);
+
+    let saveFailed = false;
+    try {
+      await submitUserInfo({
+        email: email || undefined,
+        name: body.name,
+        height: Number(body.height_cm),
+        weight: Number(body.weight_kg),
+        gender: body.gender,
+        chest: parseNum(body.chest_cm),
+        waist: parseNum(body.waist_cm),
+        hips: parseNum(body.hips_cm),
+      });
+    } catch {
+      saveFailed = true;
+    }
+
+    const toB64 = (file) =>
+      new Promise((res) => {
+        const r = new FileReader();
+        r.onload = () => res(r.result);
+        r.readAsDataURL(file);
+      });
+
+    let aiImageUrl = null;
+    try {
+      const garmentB64 = await toB64(images.garment);
+      const bodyB64 = images.body ? await toB64(images.body) : null;
+      const { data } = await submitTryOn({
+        garment_image_b64: garmentB64,
+        body_image_b64: bodyB64,
+        category: product.category,
+        fit_type: product.fit_type,
+        material: product.material,
+      });
+      aiImageUrl = data.image_url ?? null;
+    } catch {
+      aiImageUrl = null;
+    }
+
+    // Fallback: show the user's uploaded garment photo as preview
+    const garmentObjectUrl = URL.createObjectURL(images.garment);
+
+    try {
+      if (email) sessionStorage.setItem("fitro_email", email);
+      const fitResult = analyzeFit({
+        user: {
+          gender: body.gender,
+          height_cm: Number(body.height_cm),
+          weight_kg: Number(body.weight_kg),
+          chest_cm: Number(body.chest_cm),
+          waist_cm: Number(body.waist_cm),
+          hips_cm: Number(body.hips_cm),
+        },
+        product: {
+          category: product.category,
+          size_label: product.size_label,
+          region: product.region,
+          fit_type: product.fit_type,
+          material: product.material,
+        },
+        garment_measurements: {
+          chest_cm: Number(garment.chest_cm),
+          waist_cm: Number(garment.waist_cm),
+          hips_cm: Number(garment.hips_cm),
+          length_cm: Number(garment.length_cm),
+          thigh_cm: Number(garment.thigh_cm),
+        },
+      });
+      setTryOnImage(aiImageUrl ?? garmentObjectUrl);
+      setResult(fitResult);
+      if (saveFailed) setError(t("userInfo.saveWarning"));
+    } catch {
+      setError(t("userInfo.error"));
+    } finally {
+      setImagesLoading(false);
     }
   }
 
@@ -302,9 +457,29 @@ export function UserInfoPage({
           <p className="text-gray-400 text-xs mt-1">{t("userInfo.step1Sub")}</p>
         </div>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            setPhase("mode");
+            setError("");
+            let saveFailed = false;
+            try {
+              await submitUserInfo({
+                email: email || undefined,
+                name: body.name,
+                height: Number(body.height_cm),
+                weight: Number(body.weight_kg),
+                gender: body.gender,
+                chest: parseNum(body.chest_cm),
+                waist: parseNum(body.waist_cm),
+                hips: parseNum(body.hips_cm),
+              });
+            } catch {
+              saveFailed = true;
+            }
+            if (email) sessionStorage.setItem("fitro_email", email);
+            if (saveFailed) {
+              setError(t("userInfo.saveWarning"));
+            }
+            onProfileSaved?.({ name: body.name, email: email || "", body });
           }}
           className="space-y-3"
         >
@@ -366,6 +541,7 @@ export function UserInfoPage({
           >
             {t("userInfo.next")} <ChevronRight size={18} />
           </button>
+          {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         </form>
       </div>
     );
@@ -375,7 +551,7 @@ export function UserInfoPage({
   if (phase === "mode") {
     return (
       <div
-        className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[440px] mx-4"
+        className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[520px] mx-4"
         style={{ animation: "scale-in 0.35s ease both" }}
       >
         {welcomeBack && (
@@ -392,32 +568,26 @@ export function UserInfoPage({
           </h2>
           <p className="text-gray-400 text-xs mt-1">{t("userInfo.modeSub")}</p>
         </div>
-        <div className="space-y-3">
+        <div className="grid grid-cols-2 gap-4">
           <button
             onClick={() => {
               setMode("REPORT_ONLY");
               setPhase("garment");
             }}
-            className="w-full text-left border-2 border-gray-100 hover:border-cyan-400 rounded-3xl p-5 transition-all group"
+            className="cursor-pointer text-left border-2 border-gray-100 hover:border-cyan-400 rounded-3xl p-6 transition-all group"
           >
-            <div className="flex items-start gap-4">
-              <div className="w-11 h-11 rounded-2xl bg-cyan-50 flex items-center justify-center flex-shrink-0 group-hover:bg-cyan-100 transition-colors">
-                <FileText size={20} className="text-cyan-500" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="font-bold text-gray-800 text-sm">
-                    {t("userInfo.modeReport")}
-                  </span>
-                  <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full font-medium">
-                    {t("userInfo.modeReportBadge")}
-                  </span>
-                </div>
-                <p className="text-gray-400 text-xs">
-                  {t("userInfo.modeReportDesc")}
-                </p>
-              </div>
+            <div className="w-12 h-12 rounded-2xl bg-cyan-50 flex items-center justify-center mb-4 group-hover:bg-cyan-100 transition-colors">
+              <FileText size={22} className="text-cyan-500" />
             </div>
+            <p className="font-bold text-gray-800 text-sm mb-1.5">
+              {t("userInfo.modeReport")}
+            </p>
+            <span className="text-[10px] bg-cyan-50 text-cyan-500 px-2 py-0.5 rounded-full font-medium">
+              {t("userInfo.modeReportBadge")}
+            </span>
+            <p className="text-gray-400 text-xs mt-3 leading-relaxed">
+              {t("userInfo.modeReportDesc")}
+            </p>
           </button>
 
           <button
@@ -425,34 +595,22 @@ export function UserInfoPage({
               setMode("IMAGE_AND_REPORT");
               setPhase("garment");
             }}
-            className="w-full text-left border-2 border-gray-100 hover:border-purple-400 rounded-3xl p-5 transition-all group"
+            className="cursor-pointer text-left border-2 border-gray-100 hover:border-purple-400 rounded-3xl p-6 transition-all group"
           >
-            <div className="flex items-start gap-4">
-              <div className="w-11 h-11 rounded-2xl bg-purple-50 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-100 transition-colors">
-                <Sparkles size={20} className="text-purple-500" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="font-bold text-gray-800 text-sm">
-                    {t("userInfo.modeVisual")}
-                  </span>
-                  <span className="text-[10px] bg-purple-50 text-purple-500 px-2 py-0.5 rounded-full font-medium">
-                    {t("userInfo.modeVisualBadge")}
-                  </span>
-                </div>
-                <p className="text-gray-400 text-xs">
-                  {t("userInfo.modeVisualDesc")}
-                </p>
-              </div>
+            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center mb-4 group-hover:bg-purple-100 transition-colors">
+              <Sparkles size={22} className="text-purple-500" />
             </div>
+            <p className="font-bold text-gray-800 text-sm mb-1.5">
+              {t("userInfo.modeVisual")}
+            </p>
+            <span className="text-[10px] bg-purple-50 text-purple-500 px-2 py-0.5 rounded-full font-medium">
+              {t("userInfo.modeVisualBadge")}
+            </span>
+            <p className="text-gray-400 text-xs mt-3 leading-relaxed">
+              {t("userInfo.modeVisualDesc")}
+            </p>
           </button>
         </div>
-        <button
-          onClick={() => setPhase(welcomeBack ? "email" : "body")}
-          className="w-full mt-5 text-gray-400 text-xs hover:text-gray-600 transition text-center flex items-center justify-center gap-1"
-        >
-          <BackIcon size={14} /> {t("userInfo.back")}
-        </button>
       </div>
     );
   }
@@ -468,6 +626,114 @@ export function UserInfoPage({
       ? t("userInfo.tshirt")
       : t("userInfo.shirt");
 
+    // ── IMAGE + VISUAL RESULT ─────────────────────────────────────────────────
+    if (mode === "IMAGE_AND_REPORT") {
+      return (
+        <div
+          className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[680px] mx-4"
+          style={{ animation: "scale-in 0.35s ease both" }}
+        >
+          <div
+            className="text-center mb-6"
+            style={{ animation: "fade-up 0.4s ease both" }}
+          >
+            <h2 className="text-2xl font-bold text-gray-800">
+              {t("userInfo.tryOnTitle")}
+            </h2>
+            <p className="text-gray-400 text-sm mt-1">
+              {categoryLabel} · {product.size_label} · {product.region}
+            </p>
+          </div>
+
+          <div
+            className="grid md:grid-cols-2 gap-6 mb-6"
+            style={{ animation: "fade-up 0.4s 0.1s ease both" }}
+          >
+            <div className="rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 flex flex-col">
+              {tryOnImage ? (
+                <img
+                  src={tryOnImage}
+                  alt={t("userInfo.tryOnLabel")}
+                  className="w-full flex-1 object-cover max-h-72"
+                />
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center py-10 gap-3">
+                  <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center">
+                    <Sparkles size={26} className="text-purple-300" />
+                  </div>
+                  <p className="text-gray-400 text-xs text-center px-4 leading-relaxed">
+                    {t("userInfo.tryOnNote")}
+                  </p>
+                </div>
+              )}
+              <div className="p-3 text-center bg-purple-50/50 border-t border-purple-100/50">
+                <p className="text-[11px] text-purple-500 font-medium">
+                  {t("userInfo.tryOnLabel")}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex flex-col justify-center gap-5">
+              <div className="flex flex-wrap gap-2">
+                <span
+                  className={`px-5 py-2 rounded-full text-sm font-bold ${fitStyle.badge}`}
+                >
+                  {t(`userInfo.${result.fit_result}`)}
+                </span>
+                <span
+                  className={`px-3 py-2 rounded-full text-xs font-medium ${
+                    CONFIDENCE_COLORS[result.confidence]
+                  }`}
+                >
+                  {t(`userInfo.${result.confidence}`)}{" "}
+                  {t("userInfo.confidence")}
+                </span>
+              </div>
+              <div className="border border-cyan-100 bg-cyan-50 rounded-2xl p-4">
+                <p className="text-xs text-cyan-500 uppercase tracking-wider mb-2 font-semibold">
+                  {t("userInfo.adviceLabel")}
+                </p>
+                <p className="text-gray-700 text-sm leading-relaxed">
+                  {lang === "ar" ? result.advice_ar : result.advice}
+                </p>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
+                  {product.fit_type}
+                </span>
+                <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
+                  {product.material}
+                </span>
+                <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
+                  {categoryLabel}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => {
+              setResult(null);
+              setProduct({});
+              setGarment({});
+              setImages({
+                body: null,
+                garment: null,
+                bodyPreview: null,
+                garmentPreview: null,
+              });
+              setTryOnImage(null);
+              setPhase("mode");
+            }}
+            className={`w-full py-3 rounded-full ${btnGradient} text-white font-bold`}
+          >
+            {t("userInfo.newAnalysis")}
+          </button>
+        </div>
+      );
+    }
+
+    // ── FULL REPORT (REPORT_ONLY) ─────────────────────────────────────────────
     return (
       <div
         className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[480px] mx-4"
@@ -520,7 +786,7 @@ export function UserInfoPage({
             {t("userInfo.analysisLabel")}
           </p>
           <p className="text-gray-700 text-sm leading-relaxed">
-            {result.explanation}
+            {lang === "ar" ? result.explanation_ar : result.explanation}
           </p>
         </div>
 
@@ -532,45 +798,9 @@ export function UserInfoPage({
             {t("userInfo.adviceLabel")}
           </p>
           <p className="text-gray-700 text-sm leading-relaxed">
-            {result.advice}
+            {lang === "ar" ? result.advice_ar : result.advice}
           </p>
         </div>
-
-        {mode === "IMAGE_AND_REPORT" && (
-          <div
-            className="border-2 border-dashed border-purple-200 rounded-3xl p-5 mb-4"
-            style={{ animation: "fade-up 0.4s 0.3s ease both" }}
-          >
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={15} className="text-purple-500" />
-              <span className="text-sm font-bold text-gray-800">
-                {t("userInfo.tryOnTitle")}
-              </span>
-              <span className="text-[10px] bg-purple-50 text-purple-500 px-2 py-0.5 rounded-full font-medium">
-                {t("userInfo.modeVisualBadge")}
-              </span>
-            </div>
-            <div className="flex flex-col items-center py-3">
-              <div className="w-20 h-20 rounded-2xl bg-purple-50 flex items-center justify-center mb-3">
-                <Shirt size={36} className="text-purple-300" />
-              </div>
-              <p className="text-gray-400 text-xs text-center leading-relaxed">
-                {t("userInfo.tryOnNote")}
-              </p>
-              <div className="flex gap-2 mt-3 flex-wrap justify-center">
-                <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-full">
-                  {product.fit_type}
-                </span>
-                <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-full">
-                  {product.material}
-                </span>
-                <span className="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-full">
-                  {categoryLabel}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
 
         <button
           onClick={() => {
@@ -587,11 +817,86 @@ export function UserInfoPage({
     );
   }
 
+  // ── IMAGE UPLOAD (IMAGE_AND_REPORT) ─────────────────────────────────────────
+  if (phase === "images") {
+    return (
+      <div
+        className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[520px] mx-4"
+        style={{ animation: "scale-in 0.35s ease both" }}
+      >
+        <div className="flex flex-col items-center mb-6">
+          <div className="w-14 h-14 bg-[#1e293b] rounded-full flex items-center justify-center mb-3 shadow-xl">
+            <Camera className="text-white" size={26} />
+          </div>
+          <h2 className="text-xl font-bold text-gray-800">
+            {t("userInfo.uploadTitle")}
+          </h2>
+          <p className="text-gray-400 text-xs mt-1 text-center px-4">
+            {t("userInfo.uploadSub")}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <ImageUploadBox
+            label={t("userInfo.bodyPhoto")}
+            hint={t("userInfo.bodyPhotoHint")}
+            preview={images.bodyPreview}
+            onChange={(f) =>
+              setImages((p) => ({
+                ...p,
+                body: f,
+                bodyPreview: f ? URL.createObjectURL(f) : null,
+              }))
+            }
+          />
+          <ImageUploadBox
+            label={t("userInfo.garmentPhoto")}
+            hint={t("userInfo.garmentPhotoHint")}
+            preview={images.garmentPreview}
+            onChange={(f) =>
+              setImages((p) => ({
+                ...p,
+                garment: f,
+                garmentPreview: f ? URL.createObjectURL(f) : null,
+              }))
+            }
+            required
+          />
+        </div>
+
+        {error && (
+          <p className="text-red-500 text-sm text-center mb-3">{error}</p>
+        )}
+        <button
+          onClick={handleTryOnAnalyze}
+          disabled={imagesLoading}
+          className={`w-full py-3.5 rounded-full ${btnGradient} text-white font-bold flex items-center justify-center gap-2 disabled:opacity-60`}
+        >
+          {imagesLoading ? (
+            <span className="flex gap-1.5">
+              {[0, 150, 300].map((d) => (
+                <span
+                  key={d}
+                  className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
+                  style={{ animationDelay: `${d}ms` }}
+                />
+              ))}
+            </span>
+          ) : (
+            <>
+              <Sparkles size={16} /> {t("userInfo.generateTryOn")}
+            </>
+          )}
+        </button>
+      </div>
+    );
+  }
+
   // ── GARMENT DETAILS ─────────────────────────────────────────────────────────
   return (
     <form
       onSubmit={handleAnalyze}
-      className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[440px] mx-4"
+      className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[760px] mx-4"
       style={{ animation: "scale-in 0.35s ease both" }}
     >
       <div className="flex flex-col items-center mb-5">
@@ -605,66 +910,80 @@ export function UserInfoPage({
       </div>
 
       <div className="space-y-5">
+        <div className="grid md:grid-cols-2 gap-5">
+          <BtnGroup
+            label={t("userInfo.category")}
+            value={product.category}
+            onChange={(v) => setProductField("category", v)}
+            options={[
+              { value: "tshirt", label: t("userInfo.tshirt") },
+              { value: "shirt", label: t("userInfo.shirt") },
+              { value: "pants", label: t("userInfo.pants") },
+            ]}
+          />
+          <BtnGroup
+            label={t("userInfo.region")}
+            value={product.region}
+            onChange={(v) => setProductField("region", v)}
+            options={["EU", "US", "IT", "TU", "CH"].map((r) => ({
+              value: r,
+              label: r,
+            }))}
+          />
+          <BtnGroup
+            label={t("userInfo.fitType")}
+            value={product.fit_type}
+            onChange={(v) => setProductField("fit_type", v)}
+            options={[
+              { value: "slim", label: t("userInfo.slim") },
+              { value: "regular", label: t("userInfo.regular") },
+              { value: "oversized", label: t("userInfo.oversized") },
+            ]}
+          />
+          <BtnGroup
+            label={t("userInfo.material")}
+            value={product.material}
+            onChange={(v) => setProductField("material", v)}
+            options={[
+              { value: "cotton", label: t("userInfo.cotton") },
+              { value: "polyester", label: t("userInfo.polyester") },
+              { value: "denim", label: t("userInfo.denim") },
+              { value: "mixed", label: t("userInfo.mixed") },
+            ]}
+          />
+        </div>
         <BtnGroup
-          label={t("userInfo.category")}
-          value={product.category}
-          onChange={(v) => setProductField("category", v)}
-          options={[
-            { value: "tshirt", label: t("userInfo.tshirt") },
-            { value: "shirt", label: t("userInfo.shirt") },
-            { value: "pants", label: t("userInfo.pants") },
-          ]}
-        />
-        <BtnGroup
-          label={t("userInfo.region")}
-          value={product.region}
-          onChange={(v) => setProductField("region", v)}
-          options={["EU", "US", "IT", "TU", "CH"].map((r) => ({
-            value: r,
-            label: r,
-          }))}
-        />
-        <BtnGroup
-          label={t("userInfo.fitType")}
-          value={product.fit_type}
-          onChange={(v) => setProductField("fit_type", v)}
-          options={[
-            { value: "slim", label: t("userInfo.slim") },
-            { value: "regular", label: t("userInfo.regular") },
-            { value: "oversized", label: t("userInfo.oversized") },
-          ]}
-        />
-        <BtnGroup
-          label={t("userInfo.material")}
-          value={product.material}
-          onChange={(v) => setProductField("material", v)}
-          options={[
-            { value: "cotton", label: t("userInfo.cotton") },
-            { value: "polyester", label: t("userInfo.polyester") },
-            { value: "denim", label: t("userInfo.denim") },
-            { value: "mixed", label: t("userInfo.mixed") },
-          ]}
-        />
-        <Field
           label={t("userInfo.sizeLabel")}
           value={product.size_label}
           onChange={(v) => setProductField("size_label", v)}
+          options={["XS", "S", "M", "L", "XL", "XXL"].map((s) => ({
+            value: s,
+            label: s,
+          }))}
         />
 
         <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">
           {t("userInfo.garmentMeasurements")}
         </p>
         {product.category !== "pants" && (
-          <Field
-            label={t("userInfo.garmentChest")}
-            type="number"
-            value={garment.chest_cm}
-            onChange={(v) => setGarmentField("chest_cm", v)}
-            required={!!product.category}
-          />
+          <div className="grid md:grid-cols-2 gap-3">
+            <Field
+              label={t("userInfo.garmentChest")}
+              type="number"
+              value={garment.chest_cm}
+              onChange={(v) => setGarmentField("chest_cm", v)}
+              required={!!product.category}
+            />
+            <Field
+              label={t("userInfo.length")}
+              type="number"
+              value={garment.length_cm}
+              onChange={(v) => setGarmentField("length_cm", v)}
+            />
+          </div>
         )}
         {product.category === "pants" && (
-          <>
+          <div className="grid md:grid-cols-2 gap-3">
             <Field
               label={t("userInfo.garmentWaist")}
               type="number"
@@ -684,14 +1003,14 @@ export function UserInfoPage({
               value={garment.thigh_cm}
               onChange={(v) => setGarmentField("thigh_cm", v)}
             />
-          </>
+            <Field
+              label={t("userInfo.length")}
+              type="number"
+              value={garment.length_cm}
+              onChange={(v) => setGarmentField("length_cm", v)}
+            />
+          </div>
         )}
-        <Field
-          label={t("userInfo.length")}
-          type="number"
-          value={garment.length_cm}
-          onChange={(v) => setGarmentField("length_cm", v)}
-        />
       </div>
 
       {error && (

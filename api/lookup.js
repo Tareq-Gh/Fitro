@@ -10,7 +10,8 @@ export default async function handler(req, res) {
   try {
     await connectDB();
   } catch {
-    return res.status(500).json({ error: "Database connection failed" });
+    // Do not hard-fail user flow when DB is temporarily unavailable.
+    return res.json({ found: false, offline: true });
   }
 
   const user = await User.findOne({ email }).select(

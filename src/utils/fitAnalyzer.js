@@ -109,6 +109,79 @@ function buildAdvice({ fitResult, material, fitType }) {
   );
 }
 
+function buildExplanationAr({
+  category,
+  primaryMeasurement,
+  garmentPrimary,
+  ease,
+  adjustedEase,
+  material,
+  fitType,
+  fitResult,
+  region,
+}) {
+  const isUpper = !isPants(category);
+  const measureLabel = isUpper ? "الصدر" : "الخصر";
+  const materialNote =
+    MATERIAL_EASE_DELTA[material] !== 0
+      ? ` ${
+          material === "denim"
+            ? "الدنيم صلب وأقل مرونة"
+            : "البوليستر محدود المطاطية"
+        }، مما يقلل الفراغ الفعلي بمقدار ${Math.abs(
+          MATERIAL_EASE_DELTA[material],
+        )} سم.`
+      : "";
+  const fitTypeNote =
+    fitType !== "regular"
+      ? ` هذا قصّ ${fitType === "slim" ? "ضيق (slim)" : "واسع (oversized)"}، ${
+          fitType === "slim"
+            ? "مما يُضيّق الفراغ بمقدار 2 سم"
+            : "مما يُضيف فراغاً إضافياً بمقدار 3 سم"
+        }.`
+      : "";
+  const regionNote =
+    region && region !== "EU"
+      ? ` ملاحظة: مقاسات الأحجام تختلف حسب المنطقة (${region} مقابل معيار EU) — تحقق دائماً من القياسات الفعلية.`
+      : "";
+
+  return (
+    `قياس ${measureLabel} لديك هو ${primaryMeasurement} سم. قياس ${measureLabel} الملبس هو ${garmentPrimary} سم.` +
+    ` الفراغ الخام = ${garmentPrimary} − ${primaryMeasurement} = ${ease} سم.` +
+    materialNote +
+    fitTypeNote +
+    ` بعد التعديلات، الفراغ الفعلي = ${adjustedEase} سم، والتصنيف هو "${fitResult}".` +
+    regionNote
+  );
+}
+
+function buildAdviceAr({ fitResult, material, fitType }) {
+  const adviceMap = {
+    Tight: `هذا الملبس سيكون ضيقاً. يُنصح بأخذ مقاس أكبر للراحة${
+      material === "denim" ? "، خاصةً مع صلابة الدنيم" : ""
+    }.`,
+    "Slightly Tight":
+      fitType === "slim"
+        ? "هذا متوقع للقصّ الضيق. إذا أردت حرية حركة أكبر، جرب مقاساً أكبر."
+        : "سيشعرك قريباً من الجسم. إذا تفضّل قصاً مريحاً، اختر مقاساً أكبر.",
+    "Perfect Fit": `مقاس ممتاز. يجب أن يكون الملبس مناسباً دون إحكام أو اتساع.${
+      material === "denim" ? " الدنيم يلين قليلاً بعد الاستخدام." : ""
+    }`,
+    Comfortable: `مقاس مريح للاستخدام اليومي مع حرية حركة. إن أردت مظهراً أكثر أناقة، جرب مقاساً أصغر.`,
+    Loose: `هذا الملبس سيكون واسعاً بشكل ملحوظ. ${
+      fitType === "oversized"
+        ? "هذا متوقع لأسلوب الـ oversized."
+        : "يُنصح بأخذ مقاس أصغر للحصول على قصّة أفضل."
+    }`,
+    Oversized: `المقاس كبير جداً. ${
+      fitType === "oversized"
+        ? "هذا مقصود لأسلوب الـ oversized."
+        : "يُنصح بشدة بأخذ مقاس أصغر بدرجة أو درجتين."
+    }`,
+  };
+  return adviceMap[fitResult] ?? "تحقق من القياسات وقارنها بجدول المقاسات.";
+}
+
 export function analyzeFit({ user, product, garment_measurements }) {
   const { chest_cm, waist_cm, hips_cm } = user ?? {};
   const { category, region, fit_type, material } = product ?? {};
@@ -131,6 +204,13 @@ export function analyzeFit({ user, product, garment_measurements }) {
         isUpper ? "chest" : "waist"
       } is needed for a ${category} analysis. Please provide all measurements.`,
       advice: "Enter complete measurements to get an accurate fit analysis.",
+      explanation_ar: `\u0627\u0644\u0642\u064a\u0627\u0633 \u0627\u0644\u0645\u0637\u0644\u0648\u0628 \u0645\u0641\u0642\u0648\u062f: ${
+        isUpper
+          ? "\u0627\u0644\u0635\u062f\u0631"
+          : "\u0627\u0644\u062e\u0635\u0631"
+      } \u0636\u0631\u0648\u0631\u064a \u0644\u062a\u062d\u0644\u064a\u0644 ${category}. \u064a\u0631\u062c\u0649 \u0625\u062f\u062e\u0627\u0644 \u062c\u0645\u064a\u0639 \u0627\u0644\u0642\u064a\u0627\u0633\u0627\u062a.`,
+      advice_ar:
+        "\u0623\u062f\u062e\u0644 \u0627\u0644\u0642\u064a\u0627\u0633\u0627\u062a \u0627\u0644\u0643\u0627\u0645\u0644\u0629 \u0644\u0644\u062d\u0635\u0648\u0644 \u0639\u0644\u0649 \u062a\u062d\u0644\u064a\u0644 \u062f\u0642\u064a\u0642.",
     };
   }
 
@@ -182,5 +262,30 @@ export function analyzeFit({ user, product, garment_measurements }) {
     fitType: normalizedFitType,
   });
 
-  return { fit_result: fitResult, confidence, explanation, advice };
+  const explanation_ar = buildExplanationAr({
+    category,
+    primaryMeasurement: bodyPrimary,
+    garmentPrimary,
+    ease,
+    adjustedEase,
+    material: normalizedMaterial,
+    fitType: normalizedFitType,
+    fitResult,
+    region,
+  });
+
+  const advice_ar = buildAdviceAr({
+    fitResult,
+    material: normalizedMaterial,
+    fitType: normalizedFitType,
+  });
+
+  return {
+    fit_result: fitResult,
+    confidence,
+    explanation,
+    advice,
+    explanation_ar,
+    advice_ar,
+  };
 }

@@ -3,12 +3,6 @@ import { User } from "./_User.js";
 import { verifyToken } from "./_auth.js";
 
 export default async function handler(req, res) {
-  try {
-    await connectDB();
-  } catch {
-    return res.status(500).json({ error: "Database connection failed" });
-  }
-
   if (req.method === "POST") {
     const { name, gender, height, weight, chest, waist, hips, email } =
       req.body ?? {};
@@ -35,6 +29,20 @@ export default async function handler(req, res) {
     };
 
     try {
+      await connectDB();
+    } catch {
+      // Keep fit analysis flow usable even if DB is down in local/dev.
+      return res.status(202).json({
+        ...data,
+        email:
+          email && typeof email === "string"
+            ? email.toLowerCase().trim()
+            : undefined,
+        offline: true,
+      });
+    }
+
+    try {
       if (email && typeof email === "string" && email.trim()) {
         const clean = email.toLowerCase().trim();
         const user = await User.findOneAndUpdate(
@@ -56,6 +64,12 @@ export default async function handler(req, res) {
       await verifyToken(req);
     } catch {
       return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    try {
+      await connectDB();
+    } catch {
+      return res.status(500).json({ error: "Database connection failed" });
     }
 
     try {

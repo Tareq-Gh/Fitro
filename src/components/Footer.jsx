@@ -47,7 +47,7 @@ export function Footer({ onNavigate }) {
               <li key={key}>
                 <button
                   onClick={action}
-                  className="text-white/60 text-sm hover:text-cyan-400 transition-colors bg-transparent border-none p-0 cursor-pointer"
+                  className="cursor-pointer text-white/60 text-sm hover:text-cyan-400 transition-colors bg-transparent border-none p-0"
                 >
                   {t(key)}
                 </button>
@@ -58,14 +58,8 @@ export function Footer({ onNavigate }) {
       </div>
 
       {/* Bottom bar */}
-      <div className="border-t border-white/10 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-2 text-white/30 text-xs max-w-6xl mx-auto w-full">
+      <div className="border-t border-white/10 px-6 py-4 flex items-center justify-center text-white/20 text-xs max-w-6xl mx-auto w-full">
         <span>{t("footer.copyright").replace("{year}", year)}</span>
-        <button
-          onClick={() => onNavigate("login")}
-          className="text-white/15 hover:text-white/40 transition-colors text-[10px] tracking-widest uppercase"
-        >
-          {t("nav.admin")}
-        </button>
       </div>
     </footer>
   );
