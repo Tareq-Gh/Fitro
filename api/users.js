@@ -10,8 +10,7 @@ export default async function handler(req, res) {
   }
 
   if (req.method === "POST") {
-    const { name, height, weight, shoulder, chest, waist, shoeSize, skinTone } =
-      req.body ?? {};
+    const { name, gender, height, weight, chest, waist, hips } = req.body ?? {};
 
     if (!name || !height || !weight) {
       return res
@@ -20,16 +19,7 @@ export default async function handler(req, res) {
     }
 
     try {
-      const user = await User.create({
-        name,
-        height,
-        weight,
-        shoulder,
-        chest,
-        waist,
-        shoeSize,
-        skinTone,
-      });
+      const user = await User.create({ name, gender, height, weight, chest, waist, hips });
       return res.status(201).json(user);
     } catch {
       return res.status(500).json({ error: "Failed to save user" });
