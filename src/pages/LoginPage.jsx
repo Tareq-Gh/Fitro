@@ -27,7 +27,10 @@ export function LoginPage({ onLogin }) {
   }
 
   return (
-    <div className="bg-white rounded-[45px] shadow-2xl p-10 w-full max-w-[380px] animate-in fade-in zoom-in duration-500">
+    <div
+      className="bg-white rounded-[45px] shadow-2xl p-10 w-full max-w-[380px]"
+      style={{ animation: "scale-in 0.35s ease both" }}
+    >
       <h2 className="text-3xl font-bold text-gray-800 mb-10 text-center">
         {t("login.title")}
       </h2>

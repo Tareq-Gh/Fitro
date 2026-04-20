@@ -15,8 +15,7 @@ import { useLang } from "../context/useLang";
 
 const btnGradient = "bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4]";
 
-const parseNum = (v) =>
-  v !== undefined && v !== "" ? Number(v) : undefined;
+const parseNum = (v) => (v !== undefined && v !== "" ? Number(v) : undefined);
 
 const FIT_COLORS = {
   Tight: {
@@ -97,7 +96,13 @@ function Select({ label, value, onChange, options, required }) {
 export function UserInfoPage() {
   const { t, lang } = useLang();
   const [step, setStep] = useState(1);
-  const [body, setBody] = useState({});
+  const [body, setBody] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem("fitro_body") ?? "{}");
+    } catch {
+      return {};
+    }
+  });
   const [product, setProduct] = useState({});
   const [garment, setGarment] = useState({});
   const [result, setResult] = useState(null);
@@ -128,6 +133,7 @@ export function UserInfoPage() {
         waist: parseNum(body.waist_cm),
         hips: parseNum(body.hips_cm),
       });
+      localStorage.setItem("fitro_body", JSON.stringify(body));
       setResult(
         analyzeFit({
           user: {
@@ -173,10 +179,16 @@ export function UserInfoPage() {
       : t("userInfo.shirt");
 
     return (
-      <div className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[480px] animate-in fade-in zoom-in duration-500 mx-4">
-        <div className="text-center mb-6">
+      <div
+        className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[480px] mx-4"
+        style={{ animation: "scale-in 0.35s ease both" }}
+      >
+        <div
+          className="text-center mb-6"
+          style={{ animation: "fade-up 0.4s ease both" }}
+        >
           <div
-            className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 ${
+            className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3 transition-transform ${
               result.fit_result === "Perfect Fit"
                 ? "bg-green-100"
                 : "bg-gray-100"
@@ -192,7 +204,10 @@ export function UserInfoPage() {
           </p>
         </div>
 
-        <div className="flex items-center justify-center gap-3 mb-6">
+        <div
+          className="flex items-center justify-center gap-3 mb-6"
+          style={{ animation: "fade-up 0.4s 0.08s ease both" }}
+        >
           <span
             className={`px-5 py-2 rounded-full text-sm font-bold ${fitStyle.badge}`}
           >
@@ -207,7 +222,10 @@ export function UserInfoPage() {
           </span>
         </div>
 
-        <div className="bg-gray-50 rounded-2xl p-4 mb-4">
+        <div
+          className="bg-gray-50 rounded-2xl p-4 mb-4"
+          style={{ animation: "fade-up 0.4s 0.15s ease both" }}
+        >
           <p className="text-xs text-gray-400 uppercase tracking-wider mb-2 font-semibold">
             {t("userInfo.analysisLabel")}
           </p>
@@ -216,7 +234,10 @@ export function UserInfoPage() {
           </p>
         </div>
 
-        <div className="border border-cyan-100 bg-cyan-50 rounded-2xl p-4 mb-6">
+        <div
+          className="border border-cyan-100 bg-cyan-50 rounded-2xl p-4 mb-6"
+          style={{ animation: "fade-up 0.4s 0.22s ease both" }}
+        >
           <p className="text-xs text-cyan-500 uppercase tracking-wider mb-2 font-semibold">
             {t("userInfo.adviceLabel")}
           </p>
@@ -245,7 +266,10 @@ export function UserInfoPage() {
   const NextIcon = lang === "ar" ? ChevronLeft : ChevronRight;
 
   return (
-    <div className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[440px] animate-in fade-in zoom-in duration-500 mx-4">
+    <div
+      className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[440px] mx-4"
+      style={{ animation: "scale-in 0.35s ease both" }}
+    >
       <div className="flex items-center justify-between mb-6">
         <div className="flex gap-2">
           {[1, 2].map((s) => (
@@ -277,7 +301,9 @@ export function UserInfoPage() {
             <h2 className="text-xl font-bold text-gray-800">
               {t("userInfo.step1Title")}
             </h2>
-            <p className="text-gray-400 text-xs mt-1">{t("userInfo.step1Sub")}</p>
+            <p className="text-gray-400 text-xs mt-1">
+              {t("userInfo.step1Sub")}
+            </p>
           </div>
 
           <Field
@@ -466,9 +492,26 @@ export function UserInfoPage() {
             <button
               type="submit"
               disabled={loading}
-              className={`flex-1 py-3.5 rounded-full ${btnGradient} text-white font-bold disabled:opacity-60`}
+              className={`flex-1 py-3.5 rounded-full ${btnGradient} text-white font-bold disabled:opacity-60 transition-opacity`}
             >
-              {loading ? t("userInfo.analyzing") : t("userInfo.analyze")}
+              {loading ? (
+                <span className="flex items-center justify-center gap-1.5">
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  />
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
+                    style={{ animationDelay: "150ms" }}
+                  />
+                  <span
+                    className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
+                    style={{ animationDelay: "300ms" }}
+                  />
+                </span>
+              ) : (
+                t("userInfo.analyze")
+              )}
             </button>
           </div>
         </form>
