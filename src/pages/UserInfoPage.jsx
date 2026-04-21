@@ -678,7 +678,7 @@ export function UserInfoPage({
                 <span
                   className={`px-5 py-2 rounded-full text-sm font-bold ${fitStyle.badge}`}
                 >
-                  {t(`userInfo.${result.fit_result}`)}
+                  {result.fit_result ? t(`userInfo.${result.fit_result}`) : "—"}
                 </span>
                 <span
                   className={`px-3 py-2 rounded-full text-xs font-medium ${
@@ -767,7 +767,7 @@ export function UserInfoPage({
           <span
             className={`px-5 py-2 rounded-full text-sm font-bold ${fitStyle.badge}`}
           >
-            {t(`userInfo.${result.fit_result}`)}
+            {result.fit_result ? t(`userInfo.${result.fit_result}`) : "—"}
           </span>
           <span
             className={`px-3 py-2 rounded-full text-xs font-medium ${

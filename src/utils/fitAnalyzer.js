@@ -1,3 +1,29 @@
+// Standard garment chest/waist measurements (cm) by size label and region.
+// Used when the user does not manually enter garment dimensions.
+const SIZE_CHART = {
+  // Upper body chest (cm) — unisex averages; women's sizes are smaller
+  upper: {
+    US: { XS: 86, S: 91, M: 97, L: 104, XL: 112, XXL: 119, XXXL: 127 },
+    EU: { XS: 84, S: 90, M: 96, L: 102, XL: 110, XXL: 118, XXXL: 126 },
+    UK: { XS: 84, S: 90, M: 96, L: 102, XL: 110, XXL: 118, XXXL: 126 },
+    IT: { XS: 82, S: 88, M: 94, L: 100, XL: 108, XXL: 116, XXXL: 124 },
+  },
+  // Lower body waist (cm)
+  lower: {
+    US: { XS: 68, S: 74, M: 80, L: 86, XL: 94, XXL: 102, XXXL: 110 },
+    EU: { XS: 66, S: 72, M: 78, L: 84, XL: 92, XXL: 100, XXXL: 108 },
+    UK: { XS: 66, S: 72, M: 78, L: 84, XL: 92, XXL: 100, XXXL: 108 },
+    IT: { XS: 64, S: 70, M: 76, L: 82, XL: 90, XXL: 98, XXXL: 106 },
+  },
+};
+
+function lookupGarmentMeasurement(category, size_label, region) {
+  const type = isPants(category) ? "lower" : "upper";
+  const regionMap = SIZE_CHART[type][region] ?? SIZE_CHART[type]["US"];
+  const normalizedSize = size_label?.toUpperCase().replace(/\s+/g, "");
+  return regionMap[normalizedSize] ?? null;
+}
+
 const FIT_BANDS = [
   { max: 1, label: "Tight" },
   { max: 4, label: "Slightly Tight" },
@@ -184,16 +210,18 @@ function buildAdviceAr({ fitResult, material, fitType }) {
 
 export function analyzeFit({ user, product, garment_measurements }) {
   const { chest_cm, waist_cm, hips_cm } = user ?? {};
-  const { category, region, fit_type, material } = product ?? {};
+  const { category, region, fit_type, material, size_label } = product ?? {};
   const garment = garment_measurements ?? {};
 
   const isUpper = !isPants(category);
 
   const bodyPrimary = isUpper ? Number(chest_cm) : Number(waist_cm);
   const bodySecondary = isUpper ? null : Number(hips_cm);
-  const garmentPrimary = isUpper
-    ? Number(garment.chest_cm)
-    : Number(garment.waist_cm);
+
+  // Use manually entered garment measurement, or fall back to size chart lookup.
+  const garmentPrimary =
+    (isUpper ? Number(garment.chest_cm) : Number(garment.waist_cm)) ||
+    lookupGarmentMeasurement(category, size_label, region);
   const garmentSecondary = isUpper ? null : Number(garment.hips_cm);
 
   if (!bodyPrimary || !garmentPrimary) {
