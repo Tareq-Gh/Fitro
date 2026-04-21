@@ -18,10 +18,6 @@ export function Navbar({
   const { t, lang, setLang } = useLang();
   const [openUserMenu, setOpenUserMenu] = useState(false);
 
-  function nav(page) {
-    onNavigate(page);
-  }
-
   return (
     <>
       <nav className="fixed inset-x-0 top-0 z-50 text-white/80 backdrop-blur-sm bg-[#0b1530]/55 border-b border-white/10">
@@ -29,7 +25,7 @@ export function Navbar({
           {/* Logo */}
           <div
             className="flex items-center gap-2 cursor-pointer group"
-            onClick={() => nav("landing")}
+            onClick={() => onNavigate("landing")}
           >
             <Shirt
               className="text-cyan-400 group-hover:scale-110 transition-transform"
@@ -44,14 +40,14 @@ export function Navbar({
           {/* Center links */}
           <div className="hidden md:flex items-center gap-8 text-sm tracking-[0.18em] uppercase absolute left-1/2 -translate-x-1/2">
             <button
-              onClick={() => nav("landing")}
+              onClick={() => onNavigate("landing")}
               className="cursor-pointer hover:text-cyan-300 transition"
             >
               {t("nav.home")}
             </button>
             <button
               onClick={() => {
-                nav("landing");
+                onNavigate("landing");
                 setTimeout(
                   () =>
                     document
@@ -66,7 +62,7 @@ export function Navbar({
             </button>
             <button
               onClick={() => {
-                nav("landing");
+                onNavigate("landing");
                 setTimeout(
                   () =>
                     document
@@ -111,39 +107,38 @@ export function Navbar({
             <button
               onClick={() => setLang(lang === "en" ? "ar" : "en")}
               className="cursor-pointer inline-flex items-center gap-2 border border-white/20 rounded-full px-3.5 py-1.5 hover:border-cyan-400/60 hover:text-cyan-300 transition normal-case tracking-normal"
-              title="Switch language"
             >
               <Languages size={15} />
-              <span>{lang === "en" ? "Arabic" : "English"}</span>
+              <span>{t("nav.langSwitch")}</span>
             </button>
 
             {userProfile && openUserMenu && (
               <div className="absolute top-full right-0 mt-3 w-80 bg-[#0f1d3a] border border-white/15 rounded-2xl p-4 shadow-2xl text-white/80 normal-case tracking-normal z-[60]">
                 <p className="text-[11px] text-white/40 uppercase tracking-wider mb-2">
-                  User Profile
+                  {t("nav.userProfile")}
                 </p>
                 <div className="space-y-1.5 text-sm mb-3">
                   <p>
-                    <span className="text-white/45">Email:</span>{" "}
+                    <span className="text-white/45">{t("nav.profileEmail")}:</span>{" "}
                     {userProfile.email || "-"}
                   </p>
                   <p>
-                    <span className="text-white/45">Name:</span>{" "}
+                    <span className="text-white/45">{t("nav.profileName")}:</span>{" "}
                     {userProfile.name || "-"}
                   </p>
                   {userProfile.hasMeasurements ? (
                     <>
                       <p>
-                        <span className="text-white/45">Height:</span>{" "}
+                        <span className="text-white/45">{t("nav.profileHeight")}:</span>{" "}
                         {userProfile.body?.height_cm || "-"} cm
                       </p>
                       <p>
-                        <span className="text-white/45">Weight:</span>{" "}
+                        <span className="text-white/45">{t("nav.profileWeight")}:</span>{" "}
                         {userProfile.body?.weight_kg || "-"} kg
                       </p>
                       <p>
                         <span className="text-white/45">
-                          Chest / Waist / Hips:
+                          {t("nav.profileMeasurements")}:
                         </span>{" "}
                         {userProfile.body?.chest_cm || "-"} /{" "}
                         {userProfile.body?.waist_cm || "-"} /{" "}
@@ -151,7 +146,7 @@ export function Navbar({
                       </p>
                     </>
                   ) : (
-                    <p className="text-amber-300 text-xs">No body data yet.</p>
+                    <p className="text-amber-300 text-xs">{t("nav.noBodyData")}</p>
                   )}
                 </div>
                 <div className="flex gap-2">
@@ -163,7 +158,7 @@ export function Navbar({
                       }}
                       className="cursor-pointer flex-1 bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4] text-white text-xs font-bold rounded-full px-3 py-2"
                     >
-                      Fill User Data
+                      {t("nav.fillUserData")}
                     </button>
                   )}
                   <button
@@ -173,7 +168,7 @@ export function Navbar({
                     }}
                     className="cursor-pointer inline-flex items-center gap-1 border border-red-400/30 text-red-300 text-xs rounded-full px-3 py-2 hover:bg-red-500/10"
                   >
-                    <LogOut size={12} /> Logout
+                    <LogOut size={12} /> {t("nav.logout")}
                   </button>
                 </div>
               </div>

@@ -17,8 +17,8 @@ import {
 import { submitUserInfo, lookupByEmail, submitTryOn } from "../services/api";
 import { analyzeFit } from "../utils/fitAnalyzer";
 import { useLang } from "../context/useLang";
-
-const btnGradient = "bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4]";
+import { btnGradient } from "../constants";
+import { LoadingDots } from "../components/LoadingDots";
 
 const parseNum = (v) => (v !== undefined && v !== "" ? Number(v) : undefined);
 
@@ -186,6 +186,48 @@ export function UserInfoPage({
 
   const BackIcon = lang === "ar" ? ChevronRight : ChevronLeft;
 
+  // Shared: user payload for DB save (used by both analyze flows)
+  function getUserPayload() {
+    return {
+      email: email || undefined,
+      name: body.name,
+      height: Number(body.height_cm),
+      weight: Number(body.weight_kg),
+      gender: body.gender,
+      chest: parseNum(body.chest_cm),
+      waist: parseNum(body.waist_cm),
+      hips: parseNum(body.hips_cm),
+    };
+  }
+
+  // Shared: analyzeFit params (used by both analyze flows)
+  function getFitParams() {
+    return {
+      user: {
+        gender: body.gender,
+        height_cm: Number(body.height_cm),
+        weight_kg: Number(body.weight_kg),
+        chest_cm: Number(body.chest_cm),
+        waist_cm: Number(body.waist_cm),
+        hips_cm: Number(body.hips_cm),
+      },
+      product: {
+        category: product.category,
+        size_label: product.size_label,
+        region: product.region,
+        fit_type: product.fit_type,
+        material: product.material,
+      },
+      garment_measurements: {
+        chest_cm: Number(garment.chest_cm),
+        waist_cm: Number(garment.waist_cm),
+        hips_cm: Number(garment.hips_cm),
+        length_cm: Number(garment.length_cm),
+        thigh_cm: Number(garment.thigh_cm),
+      },
+    };
+  }
+
   async function handleEmailLookup(e) {
     e.preventDefault();
     setLookupLoading(true);
@@ -239,48 +281,14 @@ export function UserInfoPage({
     setLoading(true);
     let saveFailed = false;
     try {
-      await submitUserInfo({
-        email: email || undefined,
-        name: body.name,
-        height: Number(body.height_cm),
-        weight: Number(body.weight_kg),
-        gender: body.gender,
-        chest: parseNum(body.chest_cm),
-        waist: parseNum(body.waist_cm),
-        hips: parseNum(body.hips_cm),
-      });
+      await submitUserInfo(getUserPayload());
     } catch {
       saveFailed = true;
     }
 
     try {
       if (email) sessionStorage.setItem("fitro_email", email);
-      setResult(
-        analyzeFit({
-          user: {
-            gender: body.gender,
-            height_cm: Number(body.height_cm),
-            weight_kg: Number(body.weight_kg),
-            chest_cm: Number(body.chest_cm),
-            waist_cm: Number(body.waist_cm),
-            hips_cm: Number(body.hips_cm),
-          },
-          product: {
-            category: product.category,
-            size_label: product.size_label,
-            region: product.region,
-            fit_type: product.fit_type,
-            material: product.material,
-          },
-          garment_measurements: {
-            chest_cm: Number(garment.chest_cm),
-            waist_cm: Number(garment.waist_cm),
-            hips_cm: Number(garment.hips_cm),
-            length_cm: Number(garment.length_cm),
-            thigh_cm: Number(garment.thigh_cm),
-          },
-        }),
-      );
+      setResult(analyzeFit(getFitParams()));
       if (saveFailed) {
         setError(t("userInfo.saveWarning"));
       }
@@ -301,16 +309,7 @@ export function UserInfoPage({
 
     let saveFailed = false;
     try {
-      await submitUserInfo({
-        email: email || undefined,
-        name: body.name,
-        height: Number(body.height_cm),
-        weight: Number(body.weight_kg),
-        gender: body.gender,
-        chest: parseNum(body.chest_cm),
-        waist: parseNum(body.waist_cm),
-        hips: parseNum(body.hips_cm),
-      });
+      await submitUserInfo(getUserPayload());
     } catch {
       saveFailed = true;
     }
@@ -343,30 +342,7 @@ export function UserInfoPage({
 
     try {
       if (email) sessionStorage.setItem("fitro_email", email);
-      const fitResult = analyzeFit({
-        user: {
-          gender: body.gender,
-          height_cm: Number(body.height_cm),
-          weight_kg: Number(body.weight_kg),
-          chest_cm: Number(body.chest_cm),
-          waist_cm: Number(body.waist_cm),
-          hips_cm: Number(body.hips_cm),
-        },
-        product: {
-          category: product.category,
-          size_label: product.size_label,
-          region: product.region,
-          fit_type: product.fit_type,
-          material: product.material,
-        },
-        garment_measurements: {
-          chest_cm: Number(garment.chest_cm),
-          waist_cm: Number(garment.waist_cm),
-          hips_cm: Number(garment.hips_cm),
-          length_cm: Number(garment.length_cm),
-          thigh_cm: Number(garment.thigh_cm),
-        },
-      });
+      const fitResult = analyzeFit(getFitParams());
       setTryOnImage(aiImageUrl ?? garmentObjectUrl);
       setResult(fitResult);
       if (saveFailed) setError(t("userInfo.saveWarning"));
@@ -412,19 +388,7 @@ export function UserInfoPage({
             disabled={lookupLoading}
             className={`w-full py-3.5 rounded-full ${btnGradient} text-white font-bold flex items-center justify-center gap-2 disabled:opacity-60`}
           >
-            {lookupLoading ? (
-              <span className="flex gap-1.5">
-                {[0, 150, 300].map((d) => (
-                  <span
-                    key={d}
-                    className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
-                    style={{ animationDelay: `${d}ms` }}
-                  />
-                ))}
-              </span>
-            ) : (
-              t("userInfo.emailGateBtn")
-            )}
+            {lookupLoading ? <LoadingDots /> : t("userInfo.emailGateBtn")}
           </button>
         </form>
         <button
@@ -462,16 +426,7 @@ export function UserInfoPage({
             setError("");
             let saveFailed = false;
             try {
-              await submitUserInfo({
-                email: email || undefined,
-                name: body.name,
-                height: Number(body.height_cm),
-                weight: Number(body.weight_kg),
-                gender: body.gender,
-                chest: parseNum(body.chest_cm),
-                waist: parseNum(body.waist_cm),
-                hips: parseNum(body.hips_cm),
-              });
+              await submitUserInfo(getUserPayload());
             } catch {
               saveFailed = true;
             }
@@ -697,10 +652,10 @@ export function UserInfoPage({
             style={{ animation: "fade-up 0.4s 0.28s ease both" }}
           >
             <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
-              {product.fit_type}
+              {t(`userInfo.${product.fit_type}`)}
             </span>
             <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
-              {product.material}
+              {t(`userInfo.${product.material}`)}
             </span>
             <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
               {categoryLabel}
@@ -869,15 +824,7 @@ export function UserInfoPage({
           className={`w-full py-3.5 rounded-full ${btnGradient} text-white font-bold flex items-center justify-center gap-2 disabled:opacity-60`}
         >
           {imagesLoading ? (
-            <span className="flex gap-1.5">
-              {[0, 150, 300].map((d) => (
-                <span
-                  key={d}
-                  className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
-                  style={{ animationDelay: `${d}ms` }}
-                />
-              ))}
-            </span>
+            <LoadingDots />
           ) : (
             <>
               <Sparkles size={16} /> {t("userInfo.generateTryOn")}
@@ -1026,19 +973,7 @@ export function UserInfoPage({
           disabled={loading}
           className={`flex-1 py-3.5 rounded-full ${btnGradient} text-white font-bold disabled:opacity-60 transition-opacity`}
         >
-          {loading ? (
-            <span className="flex items-center justify-center gap-1.5">
-              {[0, 150, 300].map((d) => (
-                <span
-                  key={d}
-                  className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
-                  style={{ animationDelay: `${d}ms` }}
-                />
-              ))}
-            </span>
-          ) : (
-            t("userInfo.analyze")
-          )}
+          {loading ? <LoadingDots /> : t("userInfo.analyze")}
         </button>
       </div>
     </form>

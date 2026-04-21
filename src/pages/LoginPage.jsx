@@ -2,8 +2,7 @@
 import { User, Lock, Eye, EyeOff } from "lucide-react";
 import { login } from "../services/api";
 import { useLang } from "../context/useLang";
-
-const btnGradient = "bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4]";
+import { btnGradient } from "../constants";
 
 export function LoginPage({ onLogin }) {
   const { t } = useLang();

@@ -8,9 +8,9 @@ import { AdminPage } from "./pages/AdminPage";
 import { LangProvider } from "./context/LangContext";
 import { useLang } from "./context/useLang";
 import { lookupByEmail, registerUser } from "./services/api";
-import { Mail, User, ChevronDown, X } from "lucide-react";
-
-const btnGradient = "bg-gradient-to-r from-[#1e4e79] to-[#3eb5d4]";
+import { Mail, User, X } from "lucide-react";
+import { btnGradient } from "./constants";
+import { LoadingDots } from "./components/LoadingDots";
 
 function AnalyzeModal({ onClose, onDone }) {
   const { t } = useLang();
@@ -36,7 +36,7 @@ function AnalyzeModal({ onClose, onDone }) {
     setNotFound(false);
     const trimmedEmail = email.trim().toLowerCase();
     if (!trimmedEmail) {
-      setError("Email is required");
+      setError(t("userInfo.emailRequired"));
       return;
     }
     setLoading(true);
@@ -84,11 +84,11 @@ function AnalyzeModal({ onClose, onDone }) {
     setError("");
     const trimmedEmail = email.trim().toLowerCase();
     if (!trimmedEmail || !name.trim()) {
-      setError("Email and name are required");
+      setError(t("userInfo.fieldsRequired"));
       return;
     }
     if (!gender) {
-      setError(t("userInfo.genderLabel") + " is required");
+      setError(t("userInfo.genderRequired"));
       return;
     }
     setLoading(true);
@@ -118,18 +118,6 @@ function AnalyzeModal({ onClose, onDone }) {
       setLoading(false);
     }
   }
-
-  const LoadingDots = () => (
-    <span className="flex gap-1.5 justify-center">
-      {[0, 150, 300].map((d) => (
-        <span
-          key={d}
-          className="w-1.5 h-1.5 rounded-full bg-white/70 animate-bounce"
-          style={{ animationDelay: `${d}ms` }}
-        />
-      ))}
-    </span>
-  );
 
   return (
     <div
@@ -297,7 +285,7 @@ function AnalyzeModal({ onClose, onDone }) {
 }
 
 function AppContent() {
-  const { dir, lang } = useLang();
+  const { dir, lang, t } = useLang();
 
   const getInitialPage = () => {
     if (window.location.pathname === "/admin") return "login";
@@ -408,7 +396,7 @@ function AppContent() {
         body: payload.body ?? {},
         hasMeasurements: false,
       });
-      setUserNotice("Welcome back! Please complete your measurements.");
+      setUserNotice(t("userInfo.welcomeBackNotice"));
       setTimeout(() => setUserNotice(""), 2600);
       setUserInfoPhase("body");
       setUserInfoWelcome(null);
@@ -421,7 +409,7 @@ function AppContent() {
         body: { name: payload.name ?? "", gender: payload.gender ?? "" },
         hasMeasurements: false,
       });
-      setUserNotice("Account created! Please fill in your measurements.");
+      setUserNotice(t("userInfo.accountCreatedNotice"));
       setTimeout(() => setUserNotice(""), 2600);
       setUserInfoPhase("body");
       setUserInfoWelcome(null);
@@ -435,7 +423,7 @@ function AppContent() {
 
   function handleUserLogout() {
     applyProfile(null);
-    setUserNotice("Logged out");
+    setUserNotice(t("userInfo.loggedOut"));
     setTimeout(() => setUserNotice(""), 1500);
   }
 

@@ -7,6 +7,15 @@ export const en = {
     dashboard: "Dashboard",
     logout: "Logout",
     admin: "Admin",
+    langSwitch: "العربية",
+    userProfile: "User Profile",
+    profileEmail: "Email",
+    profileName: "Name",
+    profileHeight: "Height",
+    profileWeight: "Weight",
+    profileMeasurements: "Chest / Waist / Hips",
+    noBodyData: "No body data yet.",
+    fillUserData: "Fill User Data",
   },
 
   landing: {
@@ -131,7 +140,8 @@ export const en = {
     modeReportDesc: "Detailed fit analysis with size advice",
     modeReportBadge: "Instant",
     modeVisual: "Visual Try-On",
-    modeVisualDesc: "Upload your photo + garment photo and see yourself wearing it",
+    modeVisualDesc:
+      "Upload your photo + garment photo and see yourself wearing it",
     modeVisualBadge: "AI Try-On",
     tryOnTitle: "Virtual Try-On",
     tryOnNote:
@@ -155,6 +165,12 @@ export const en = {
     welcomeBack: "Welcome back, {name}! Your measurements are loaded.",
     newProfile:
       "No saved profile found — we\u2019ll create one after analysis.",
+    emailRequired: "Email is required.",
+    fieldsRequired: "Email and name are required.",
+    genderRequired: "Gender is required.",
+    welcomeBackNotice: "Welcome back! Please complete your measurements.",
+    accountCreatedNotice: "Account created! Please fill in your measurements.",
+    loggedOut: "Logged out.",
     Tight: "Tight",
     "Slightly Tight": "Slightly Tight",
     "Perfect Fit": "Perfect Fit",
