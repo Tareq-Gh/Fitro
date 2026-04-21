@@ -308,6 +308,29 @@ export function analyzeFit({ user, product, garment_measurements }) {
     fitType: normalizedFitType,
   });
 
+  const SHORT_DESC = {
+    Tight:
+      "This size is too tight for your measurements. Consider going one size up.",
+    "Slightly Tight":
+      "This size is a little snug. You might be more comfortable in the next size up.",
+    "Perfect Fit": "This size fits you just right — great choice.",
+    Comfortable:
+      "This size gives you a relaxed, comfortable fit with good freedom of movement.",
+    Loose:
+      "This size is a bit loose on you. Sizing down could give a cleaner look.",
+    Oversized:
+      "This size is significantly larger than your measurements — expect a bold, oversized look.",
+  };
+  const SHORT_DESC_AR = {
+    Tight: "هذا المقاس ضيق جداً على قياساتك. يُنصح بتجربة مقاس أكبر.",
+    "Slightly Tight":
+      "هذا المقاس ضيق قليلاً. قد تشعر براحة أكبر بالمقاس التالي.",
+    "Perfect Fit": "هذا المقاس يناسبك تماماً — اختيار موفق.",
+    Comfortable: "هذا المقاس مريح ويمنحك حرية حركة جيدة.",
+    Loose: "هذا المقاس فضفاض قليلاً. المقاس الأصغر قد يبدو أفضل.",
+    Oversized: "هذا المقاس أكبر بكثير من قياساتك — سيبدو فضفاضاً بشكل واضح.",
+  };
+
   return {
     fit_result: fitResult,
     confidence,
@@ -315,5 +338,7 @@ export function analyzeFit({ user, product, garment_measurements }) {
     advice,
     explanation_ar,
     advice_ar,
+    short_description: SHORT_DESC[fitResult] ?? explanation,
+    short_description_ar: SHORT_DESC_AR[fitResult] ?? explanation_ar,
   };
 }

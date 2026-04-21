@@ -130,9 +130,9 @@ export const en = {
     modeReport: "Fit Report",
     modeReportDesc: "Detailed fit analysis with size advice",
     modeReportBadge: "Instant",
-    modeVisual: "Report + Visual Try-On",
-    modeVisualDesc: "Full analysis with an AI-generated preview",
-    modeVisualBadge: "AI Preview",
+    modeVisual: "Visual Try-On",
+    modeVisualDesc: "Upload your photo + garment photo and see yourself wearing it",
+    modeVisualBadge: "AI Try-On",
     tryOnTitle: "Virtual Try-On",
     tryOnNote:
       "An AI-generated virtual try-on based on your measurements and garment selection will appear here.",

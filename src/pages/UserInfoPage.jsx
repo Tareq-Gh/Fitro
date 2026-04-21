@@ -630,11 +630,12 @@ export function UserInfoPage({
     if (mode === "IMAGE_AND_REPORT") {
       return (
         <div
-          className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[680px] mx-4"
+          className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[480px] mx-4"
           style={{ animation: "scale-in 0.35s ease both" }}
         >
+          {/* Header */}
           <div
-            className="text-center mb-6"
+            className="text-center mb-5"
             style={{ animation: "fade-up 0.4s ease both" }}
           >
             <h2 className="text-2xl font-bold text-gray-800">
@@ -645,70 +646,65 @@ export function UserInfoPage({
             </p>
           </div>
 
+          {/* AI Try-On Image — main focus */}
           <div
-            className="grid md:grid-cols-2 gap-6 mb-6"
+            className="rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 mb-5"
             style={{ animation: "fade-up 0.4s 0.1s ease both" }}
           >
-            <div className="rounded-3xl overflow-hidden bg-gray-50 border border-gray-100 flex flex-col">
-              {tryOnImage ? (
-                <img
-                  src={tryOnImage}
-                  alt={t("userInfo.tryOnLabel")}
-                  className="w-full flex-1 object-cover max-h-72"
-                />
-              ) : (
-                <div className="flex-1 flex flex-col items-center justify-center py-10 gap-3">
-                  <div className="w-14 h-14 rounded-2xl bg-purple-50 flex items-center justify-center">
-                    <Sparkles size={26} className="text-purple-300" />
-                  </div>
-                  <p className="text-gray-400 text-xs text-center px-4 leading-relaxed">
-                    {t("userInfo.tryOnNote")}
-                  </p>
+            {tryOnImage ? (
+              <img
+                src={tryOnImage}
+                alt={t("userInfo.tryOnLabel")}
+                className="w-full object-cover max-h-96"
+              />
+            ) : (
+              <div className="flex flex-col items-center justify-center py-16 gap-3">
+                <div className="w-16 h-16 rounded-2xl bg-purple-50 flex items-center justify-center">
+                  <Sparkles size={28} className="text-purple-300" />
                 </div>
-              )}
-              <div className="p-3 text-center bg-purple-50/50 border-t border-purple-100/50">
-                <p className="text-[11px] text-purple-500 font-medium">
-                  {t("userInfo.tryOnLabel")}
+                <p className="text-gray-400 text-xs text-center px-6 leading-relaxed">
+                  {t("userInfo.tryOnNote")}
                 </p>
               </div>
+            )}
+            <div className="px-4 py-2.5 text-center bg-purple-50/60 border-t border-purple-100/50">
+              <p className="text-[11px] text-purple-500 font-medium">
+                {t("userInfo.tryOnLabel")}
+              </p>
             </div>
+          </div>
 
-            <div className="flex flex-col justify-center gap-5">
-              <div className="flex flex-wrap gap-2">
-                <span
-                  className={`px-5 py-2 rounded-full text-sm font-bold ${fitStyle.badge}`}
-                >
-                  {result.fit_result ? t(`userInfo.${result.fit_result}`) : "—"}
-                </span>
-                <span
-                  className={`px-3 py-2 rounded-full text-xs font-medium ${
-                    CONFIDENCE_COLORS[result.confidence]
-                  }`}
-                >
-                  {t(`userInfo.${result.confidence}`)}{" "}
-                  {t("userInfo.confidence")}
-                </span>
-              </div>
-              <div className="border border-cyan-100 bg-cyan-50 rounded-2xl p-4">
-                <p className="text-xs text-cyan-500 uppercase tracking-wider mb-2 font-semibold">
-                  {t("userInfo.adviceLabel")}
-                </p>
-                <p className="text-gray-700 text-sm leading-relaxed">
-                  {lang === "ar" ? result.advice_ar : result.advice}
-                </p>
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
-                  {product.fit_type}
-                </span>
-                <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
-                  {product.material}
-                </span>
-                <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
-                  {categoryLabel}
-                </span>
-              </div>
-            </div>
+          {/* Fit Badge + Short Description */}
+          <div
+            className="flex flex-col items-center gap-3 mb-5"
+            style={{ animation: "fade-up 0.4s 0.2s ease both" }}
+          >
+            <span
+              className={`px-6 py-2 rounded-full text-sm font-bold ${fitStyle.badge}`}
+            >
+              {result.fit_result ? t(`userInfo.${result.fit_result}`) : "—"}
+            </span>
+            <p className="text-gray-600 text-sm text-center leading-relaxed px-2">
+              {lang === "ar"
+                ? result.short_description_ar
+                : result.short_description}
+            </p>
+          </div>
+
+          {/* Product tags */}
+          <div
+            className="flex gap-2 flex-wrap justify-center mb-6"
+            style={{ animation: "fade-up 0.4s 0.28s ease both" }}
+          >
+            <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
+              {product.fit_type}
+            </span>
+            <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
+              {product.material}
+            </span>
+            <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
+              {categoryLabel}
+            </span>
           </div>
 
           <button

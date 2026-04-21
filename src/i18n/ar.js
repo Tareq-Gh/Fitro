@@ -129,9 +129,9 @@ export const ar = {
     modeReport: "تقرير المقاس",
     modeReportDesc: "تحليل مفصل للمقاس مع نصائح",
     modeReportBadge: "فوري",
-    modeVisual: "تقرير + تجربة بصرية",
-    modeVisualDesc: "تحليل كامل مع معاينة مولدة بالذكاء الاصطناعي",
-    modeVisualBadge: "معاينة ذكية",
+    modeVisual: "تجربة افتراضية",
+    modeVisualDesc: "ارفع صورتك وصورة القطعة وشاهد نفسك ترتديها",
+    modeVisualBadge: "تجربة ذكاء اصطناعي",
     tryOnTitle: "تجربة افتراضية",
     tryOnNote:
       "ستظهر هنا تجربة افتراضية مولدة بالذكاء الاصطناعي بناءً على مقاساتك وتفاصيل القطعة.",
