@@ -155,6 +155,7 @@ function ImageUploadBox({ label, hint, preview, onChange, required }) {
 export function UserInfoPage({
   initialPhase = "email",
   initialWelcome = null,
+  initialBody = {},
   onProfileSaved,
 }) {
   const { t, lang } = useLang();
@@ -165,7 +166,7 @@ export function UserInfoPage({
   );
   const [welcomeBack, setWelcomeBack] = useState(initialWelcome);
   const [lookupLoading, setLookupLoading] = useState(false);
-  const [body, setBody] = useState({});
+  const [body, setBody] = useState(initialBody);
   const [product, setProduct] = useState({});
   const [garment, setGarment] = useState({});
   const [result, setResult] = useState(null);

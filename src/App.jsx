@@ -482,6 +482,7 @@ function AppContent() {
           <UserInfoPage
             initialPhase={userInfoPhase}
             initialWelcome={userInfoWelcome}
+            initialBody={userProfile?.body ?? {}}
             onProfileSaved={(profile) => {
               const p = {
                 name: profile.name,
