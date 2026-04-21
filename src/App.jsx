@@ -62,6 +62,8 @@ function AnalyzeModal({ onClose, onDone }) {
           body: bodyData,
           hasMeasurements,
         });
+      } else if (data.offline) {
+        setError(t("userInfo.serverError"));
       } else {
         setNotFound(true);
       }
@@ -178,6 +180,20 @@ function AnalyzeModal({ onClose, onDone }) {
         {/* Error */}
         {error && (
           <p className="text-red-500 text-xs text-center mb-3 px-2">{error}</p>
+        )}
+
+        {/* Not Found Banner */}
+        {notFound && tab === "login" && (
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4 text-center">
+            <p className="text-amber-700 text-xs mb-2">{t("userInfo.emailNotFound")}</p>
+            <button
+              type="button"
+              onClick={() => switchTab("register")}
+              className="text-xs font-semibold text-cyan-600 hover:underline"
+            >
+              {t("userInfo.registerBtn")}
+            </button>
+          </div>
         )}
 
         {tab === "login" ? (
