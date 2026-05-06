@@ -18,3 +18,8 @@ export const lookupByEmail = (email) =>
   api.get(`/api/lookup?email=${encodeURIComponent(email)}`);
 
 export const submitTryOn = (data) => api.post("/api/tryon", data);
+
+export const lookupSizeProfile = ({ category, fitType, gender, region, size }) =>
+  api.get("/api/size-lookup", {
+    params: { category, fitType, gender, region, size },
+  });

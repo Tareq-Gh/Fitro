@@ -1,132 +1,60 @@
-// Standard garment chest/waist measurements (cm) by size label and region.
-// Used when the user does not manually enter garment dimensions.
-const SIZE_CHART = {
-  // Upper body chest (cm) — unisex averages; women's sizes are smaller
-  upper: {
-    US: { XS: 86, S: 91, M: 97, L: 104, XL: 112, XXL: 119, XXXL: 127 },
-    EU: { XS: 84, S: 90, M: 96, L: 102, XL: 110, XXL: 118, XXXL: 126 },
-    UK: { XS: 84, S: 90, M: 96, L: 102, XL: 110, XXL: 118, XXXL: 126 },
-    IT: { XS: 82, S: 88, M: 94, L: 100, XL: 108, XXL: 116, XXXL: 124 },
-  },
-  // Lower body waist (cm)
-  lower: {
-    US: { XS: 68, S: 74, M: 80, L: 86, XL: 94, XXL: 102, XXXL: 110 },
-    EU: { XS: 66, S: 72, M: 78, L: 84, XL: 92, XXL: 100, XXXL: 108 },
-    UK: { XS: 66, S: 72, M: 78, L: 84, XL: 92, XXL: 100, XXXL: 108 },
-    IT: { XS: 64, S: 70, M: 76, L: 82, XL: 90, XXL: 98, XXXL: 106 },
-  },
+const TOLERANCE_BY_FIT = {
+  slim: { perfect: 1, comfortable: 2, loose: 4 },
+  regular: { perfect: 2, comfortable: 4, loose: 7 },
+  oversized: { perfect: 3, comfortable: 6, loose: 10 },
 };
-
-function lookupGarmentMeasurement(category, size_label, region) {
-  const type = isPants(category) ? "lower" : "upper";
-  const regionMap = SIZE_CHART[type][region] ?? SIZE_CHART[type]["US"];
-  const normalizedSize = size_label?.toUpperCase().replace(/\s+/g, "");
-  return regionMap[normalizedSize] ?? null;
-}
-
-const FIT_BANDS = [
-  { max: 1, label: "Tight" },
-  { max: 4, label: "Slightly Tight" },
-  { max: 8, label: "Perfect Fit" },
-  { max: 12, label: "Comfortable" },
-  { max: 18, label: "Loose" },
-  { max: Infinity, label: "Oversized" },
-];
-
-const MATERIAL_EASE_DELTA = {
-  denim: -2,
-  polyester: -1,
-  cotton: 0,
-  mixed: 0,
-};
-
-const FIT_TYPE_EASE_DELTA = {
-  slim: -2,
-  regular: 0,
-  oversized: 3,
-};
-
-function classifyEase(adjustedEase) {
-  for (const band of FIT_BANDS) {
-    if (adjustedEase <= band.max) return band.label;
-  }
-  return "Oversized";
-}
 
 function isPants(category) {
   return category === "pants";
 }
 
-function buildExplanation({
-  category,
-  primaryMeasurement,
-  garmentPrimary,
-  ease,
-  adjustedEase,
-  material,
-  fitType,
-  fitResult,
-  region,
-}) {
-  const isUpper = !isPants(category);
-  const measureLabel = isUpper ? "chest" : "waist";
-  const materialNote =
-    MATERIAL_EASE_DELTA[material] !== 0
-      ? ` ${
-          material === "denim"
-            ? "Denim is rigid and less forgiving"
-            : "Polyester has limited stretch"
-        }, reducing effective ease by ${Math.abs(
-          MATERIAL_EASE_DELTA[material],
-        )} cm.`
-      : "";
-  const fitTypeNote =
-    fitType !== "regular"
-      ? ` This is a ${fitType}-fit cut, which ${
-          fitType === "slim"
-            ? "is intentionally closer to the body (ease adjusted −2 cm)"
-            : "adds extra room by design (ease adjusted +3 cm)"
-        }.`
-      : "";
-  const regionNote =
-    region && region !== "EU"
-      ? ` Note: Size labels vary by region (${region} vs EU standards) — always verify actual measurements.`
-      : "";
+function classifyAgainstRange(value, range, fitType) {
+  const t = TOLERANCE_BY_FIT[fitType] ?? TOLERANCE_BY_FIT.regular;
+  if (!range) return "Perfect Fit";
 
-  return (
-    `Your ${measureLabel} measures ${primaryMeasurement} cm. The garment's ${measureLabel} measures ${garmentPrimary} cm.` +
-    ` Raw ease = ${garmentPrimary} − ${primaryMeasurement} = ${ease} cm.` +
-    materialNote +
-    fitTypeNote +
-    ` After adjustments, effective ease = ${adjustedEase} cm, resulting in a "${fitResult}" classification.` +
-    regionNote
-  );
+  if (value > range.max + t.comfortable) return "Tight";
+  if (value > range.max + t.perfect) return "Slightly Tight";
+  if (value >= range.min && value <= range.max) return "Perfect Fit";
+  if (value < range.min - t.loose) return "Oversized";
+  if (value < range.min - t.comfortable) return "Loose";
+  return "Comfortable";
 }
 
-function buildAdvice({ fitResult, material, fitType }) {
+function worstFit(...fits) {
+  const order = [
+    "Tight",
+    "Slightly Tight",
+    "Perfect Fit",
+    "Comfortable",
+    "Loose",
+    "Oversized",
+  ];
+  let winner = "Perfect Fit";
+  for (const fit of fits) {
+    if (!fit) continue;
+    if (order.indexOf(fit) < order.indexOf(winner)) winner = fit;
+  }
+  return winner;
+}
+
+function buildAdvice({ fitResult, fitType }) {
   const adviceMap = {
-    Tight: `This item will feel restrictive. Size up for comfort, especially given${
-      material === "denim" ? " the rigid denim" : " the material"
-    }.`,
+    Tight: "This size is smaller than your body range. Consider sizing up.",
     "Slightly Tight":
       fitType === "slim"
-        ? "Expected for a slim-fit cut. If you prefer more freedom of movement, consider sizing up."
+        ? "This is close for slim fit. Size up for extra comfort."
         : "This will feel close to the body. If you like a relaxed feel, choose one size up.",
-    "Perfect Fit": `Great match. This item should fit well without being restrictive or baggy.${
-      material === "denim"
-        ? " Keep in mind denim softens slightly after wear."
-        : ""
-    }`,
+    "Perfect Fit": "Great match for your selected region, fit type, and size.",
     Comfortable: `Good everyday fit with room to move. If you prefer a more tailored look, consider sizing down.`,
-    Loose: `This item will feel noticeably loose. ${
+    Loose: `This item may feel loose. ${
       fitType === "oversized"
         ? "This is expected for an oversized style."
-        : "Size down for a better silhouette."
+        : "Consider sizing down."
     }`,
-    Oversized: `Very large fit. ${
+    Oversized: `This is much roomier than your body range. ${
       fitType === "oversized"
         ? "Intentional oversized style."
-        : "Strongly consider sizing down by 1–2 sizes."
+        : "Consider sizing down by 1–2 sizes."
     }`,
   };
   return (
@@ -137,62 +65,52 @@ function buildAdvice({ fitResult, material, fitType }) {
 
 function buildExplanationAr({
   category,
-  primaryMeasurement,
-  garmentPrimary,
-  ease,
-  adjustedEase,
-  material,
+  bodyWaist,
+  bodyHips,
+  bodyChest,
+  waistRange,
+  hipRange,
+  chestRange,
   fitType,
   fitResult,
   region,
+  sizeLabel,
 }) {
   const isUpper = !isPants(category);
-  const measureLabel = isUpper ? "الصدر" : "الخصر";
-  const materialNote =
-    MATERIAL_EASE_DELTA[material] !== 0
-      ? ` ${
-          material === "denim"
-            ? "الدنيم صلب وأقل مرونة"
-            : "البوليستر محدود المطاطية"
-        }، مما يقلل الفراغ الفعلي بمقدار ${Math.abs(
-          MATERIAL_EASE_DELTA[material],
-        )} سم.`
-      : "";
-  const fitTypeNote =
-    fitType !== "regular"
-      ? ` هذا قصّ ${fitType === "slim" ? "ضيق (slim)" : "واسع (oversized)"}، ${
-          fitType === "slim"
-            ? "مما يُضيّق الفراغ بمقدار 2 سم"
-            : "مما يُضيف فراغاً إضافياً بمقدار 3 سم"
-        }.`
-      : "";
-  const regionNote =
-    region && region !== "EU"
-      ? ` ملاحظة: مقاسات الأحجام تختلف حسب المنطقة (${region} مقابل معيار EU) — تحقق دائماً من القياسات الفعلية.`
-      : "";
-
-  return (
-    `قياس ${measureLabel} لديك هو ${primaryMeasurement} سم. قياس ${measureLabel} الملبس هو ${garmentPrimary} سم.` +
-    ` الفراغ الخام = ${garmentPrimary} − ${primaryMeasurement} = ${ease} سم.` +
-    materialNote +
-    fitTypeNote +
-    ` بعد التعديلات، الفراغ الفعلي = ${adjustedEase} سم، والتصنيف هو "${fitResult}".` +
-    regionNote
-  );
+  if (isUpper) {
+    return `تمت مقارنة قياس الصدر (${bodyChest} سم) مع جدول المقاس ${sizeLabel} لمنطقة ${region} ونوع القصّة ${fitType}. نطاق الصدر للمقاس المختار هو ${chestRange.min} إلى ${chestRange.max} سم، والتصنيف النهائي هو "${fitResult}".`;
+  }
+  return `تمت مقارنة الخصر (${bodyWaist} سم) والورك (${bodyHips} سم) مع جدول المقاس ${sizeLabel} لمنطقة ${region} ونوع القصّة ${fitType}. نطاق الخصر هو ${waistRange.min}-${waistRange.max} سم ونطاق الورك هو ${hipRange.min}-${hipRange.max} سم، والتصنيف النهائي هو "${fitResult}".`;
 }
 
-function buildAdviceAr({ fitResult, material, fitType }) {
+function buildExplanation({
+  category,
+  bodyWaist,
+  bodyHips,
+  bodyChest,
+  waistRange,
+  hipRange,
+  chestRange,
+  fitType,
+  fitResult,
+  region,
+  sizeLabel,
+}) {
+  const isUpper = !isPants(category);
+  if (isUpper) {
+    return `Compared chest (${bodyChest} cm) against ${region} ${fitType} ${sizeLabel}. Selected size chest range is ${chestRange.min}-${chestRange.max} cm. Final status: "${fitResult}".`;
+  }
+  return `Compared waist (${bodyWaist} cm) and hips (${bodyHips} cm) against ${region} ${fitType} ${sizeLabel}. Waist range is ${waistRange.min}-${waistRange.max} cm and hip range is ${hipRange.min}-${hipRange.max} cm. Final status: "${fitResult}".`;
+}
+
+function buildAdviceAr({ fitResult, fitType }) {
   const adviceMap = {
-    Tight: `هذا الملبس سيكون ضيقاً. يُنصح بأخذ مقاس أكبر للراحة${
-      material === "denim" ? "، خاصةً مع صلابة الدنيم" : ""
-    }.`,
+    Tight: "هذا المقاس أصغر من قياساتك. يفضّل اختيار مقاس أكبر.",
     "Slightly Tight":
       fitType === "slim"
-        ? "هذا متوقع للقصّ الضيق. إذا أردت حرية حركة أكبر، جرب مقاساً أكبر."
+        ? "هذا ضيق قليلاً بالنسبة لقصّة slim. جرّب مقاساً أكبر لمزيد من الراحة."
         : "سيشعرك قريباً من الجسم. إذا تفضّل قصاً مريحاً، اختر مقاساً أكبر.",
-    "Perfect Fit": `مقاس ممتاز. يجب أن يكون الملبس مناسباً دون إحكام أو اتساع.${
-      material === "denim" ? " الدنيم يلين قليلاً بعد الاستخدام." : ""
-    }`,
+    "Perfect Fit": "مقاس مناسب جداً حسب المنطقة ونوع القصّة والمقاس المختار.",
     Comfortable: `مقاس مريح للاستخدام اليومي مع حرية حركة. إن أردت مظهراً أكثر أناقة، جرب مقاساً أصغر.`,
     Loose: `هذا الملبس سيكون واسعاً بشكل ملحوظ. ${
       fitType === "oversized"
@@ -208,104 +126,81 @@ function buildAdviceAr({ fitResult, material, fitType }) {
   return adviceMap[fitResult] ?? "تحقق من القياسات وقارنها بجدول المقاسات.";
 }
 
-export function analyzeFit({ user, product, garment_measurements }) {
+export function analyzeFit({ user, product, sizeProfile }) {
   const { chest_cm, waist_cm, hips_cm } = user ?? {};
-  const { category, region, fit_type, material, size_label } = product ?? {};
-  const garment = garment_measurements ?? {};
+  const { category, region, fit_type, size_label } = product ?? {};
 
   const isUpper = !isPants(category);
+  const bodyChest = Number(chest_cm);
+  const bodyWaist = Number(waist_cm);
+  const bodyHips = Number(hips_cm);
+  const fitType = (fit_type ?? "regular").toLowerCase();
 
-  const bodyPrimary = isUpper ? Number(chest_cm) : Number(waist_cm);
-  const bodySecondary = isUpper ? null : Number(hips_cm);
-
-  // Use manually entered garment measurement, or fall back to size chart lookup.
-  const garmentPrimary =
-    (isUpper ? Number(garment.chest_cm) : Number(garment.waist_cm)) ||
-    lookupGarmentMeasurement(category, size_label, region);
-  const garmentSecondary = isUpper ? null : Number(garment.hips_cm);
-
-  if (!bodyPrimary || !garmentPrimary) {
+  if (!sizeProfile) {
     return {
       fit_result: null,
       confidence: "Low",
-      explanation: `Missing required measurement: ${
-        isUpper ? "chest" : "waist"
-      } is needed for a ${category} analysis. Please provide all measurements.`,
-      advice: "Enter complete measurements to get an accurate fit analysis.",
-      explanation_ar: `\u0627\u0644\u0642\u064a\u0627\u0633 \u0627\u0644\u0645\u0637\u0644\u0648\u0628 \u0645\u0641\u0642\u0648\u062f: ${
-        isUpper
-          ? "\u0627\u0644\u0635\u062f\u0631"
-          : "\u0627\u0644\u062e\u0635\u0631"
-      } \u0636\u0631\u0648\u0631\u064a \u0644\u062a\u062d\u0644\u064a\u0644 ${category}. \u064a\u0631\u062c\u0649 \u0625\u062f\u062e\u0627\u0644 \u062c\u0645\u064a\u0639 \u0627\u0644\u0642\u064a\u0627\u0633\u0627\u062a.`,
+      explanation:
+        "No matching size profile found for the selected region, fit type, and size label.",
+      advice: "Try another size label or region.",
+      explanation_ar:
+        "لم يتم العثور على بيانات لهذا المقاس حسب المنطقة ونوع القصّة المختارين.",
       advice_ar:
-        "\u0623\u062f\u062e\u0644 \u0627\u0644\u0642\u064a\u0627\u0633\u0627\u062a \u0627\u0644\u0643\u0627\u0645\u0644\u0629 \u0644\u0644\u062d\u0635\u0648\u0644 \u0639\u0644\u0649 \u062a\u062d\u0644\u064a\u0644 \u062f\u0642\u064a\u0642.",
+        "جرّب اختيار مقاس أو منطقة مختلفة.",
     };
   }
 
-  const normalizedMaterial = (material ?? "cotton").toLowerCase();
-  const normalizedFitType = (fit_type ?? "regular").toLowerCase();
+  const waistRange = sizeProfile.waistRange;
+  const hipRange = sizeProfile.hipRange;
+  const chestRange = sizeProfile.chestRange;
 
-  const materialDelta = MATERIAL_EASE_DELTA[normalizedMaterial] ?? 0;
-  const fitTypeDelta = FIT_TYPE_EASE_DELTA[normalizedFitType] ?? 0;
-
-  const ease = garmentPrimary - bodyPrimary;
-  const adjustedEase = ease + materialDelta + fitTypeDelta;
-
-  let fitResult = classifyEase(adjustedEase);
-
-  let secondaryFitResult = null;
-  if (!isUpper && bodySecondary && garmentSecondary) {
-    const hipsEase = garmentSecondary - bodySecondary;
-    const adjustedHipsEase = hipsEase + materialDelta + fitTypeDelta;
-    secondaryFitResult = classifyEase(adjustedHipsEase);
-    if (
-      FIT_BANDS.findIndex((b) => b.label === secondaryFitResult) <
-      FIT_BANDS.findIndex((b) => b.label === fitResult)
-    ) {
-      fitResult = secondaryFitResult;
-    }
+  let fitResult = "Perfect Fit";
+  if (isUpper) {
+    fitResult = classifyAgainstRange(bodyChest, chestRange, fitType);
+  } else {
+    const waistFit = classifyAgainstRange(bodyWaist, waistRange, fitType);
+    const hipsFit = classifyAgainstRange(bodyHips, hipRange, fitType);
+    fitResult = worstFit(waistFit, hipsFit);
   }
 
-  const hasBothMeasurements = !isUpper
-    ? !!bodySecondary && !!garmentSecondary
-    : true;
-  const confidence = hasBothMeasurements ? "High" : "Medium";
+  const confidence = "High";
 
   const explanation = buildExplanation({
     category,
-    primaryMeasurement: bodyPrimary,
-    garmentPrimary,
-    ease,
-    adjustedEase,
-    material: normalizedMaterial,
-    fitType: normalizedFitType,
+    bodyWaist,
+    bodyHips,
+    bodyChest,
+    waistRange,
+    hipRange,
+    chestRange,
+    fitType,
     fitResult,
     region,
+    sizeLabel: size_label,
   });
 
   const advice = buildAdvice({
     fitResult,
-    category,
-    material: normalizedMaterial,
-    fitType: normalizedFitType,
+    fitType,
   });
 
   const explanation_ar = buildExplanationAr({
     category,
-    primaryMeasurement: bodyPrimary,
-    garmentPrimary,
-    ease,
-    adjustedEase,
-    material: normalizedMaterial,
-    fitType: normalizedFitType,
+    bodyWaist,
+    bodyHips,
+    bodyChest,
+    waistRange,
+    hipRange,
+    chestRange,
+    fitType,
     fitResult,
     region,
+    sizeLabel: size_label,
   });
 
   const advice_ar = buildAdviceAr({
     fitResult,
-    material: normalizedMaterial,
-    fitType: normalizedFitType,
+    fitType,
   });
 
   const SHORT_DESC = {

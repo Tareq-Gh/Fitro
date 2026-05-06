@@ -14,7 +14,12 @@ import {
   Camera,
   Upload,
 } from "lucide-react";
-import { submitUserInfo, lookupByEmail, submitTryOn } from "../services/api";
+import {
+  submitUserInfo,
+  lookupByEmail,
+  submitTryOn,
+  lookupSizeProfile,
+} from "../services/api";
 import { analyzeFit } from "../utils/fitAnalyzer";
 import { useLang } from "../context/useLang";
 import { btnGradient } from "../constants";
@@ -168,7 +173,6 @@ export function UserInfoPage({
   const [lookupLoading, setLookupLoading] = useState(false);
   const [body, setBody] = useState(initialBody);
   const [product, setProduct] = useState({});
-  const [garment, setGarment] = useState({});
   const [result, setResult] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -183,7 +187,6 @@ export function UserInfoPage({
 
   const setBodyField = (k, v) => setBody((p) => ({ ...p, [k]: v }));
   const setProductField = (k, v) => setProduct((p) => ({ ...p, [k]: v }));
-  const setGarmentField = (k, v) => setGarment((p) => ({ ...p, [k]: v }));
 
   const BackIcon = lang === "ar" ? ChevronRight : ChevronLeft;
 
@@ -217,14 +220,6 @@ export function UserInfoPage({
         size_label: product.size_label,
         region: product.region,
         fit_type: product.fit_type,
-        material: product.material,
-      },
-      garment_measurements: {
-        chest_cm: Number(garment.chest_cm),
-        waist_cm: Number(garment.waist_cm),
-        hips_cm: Number(garment.hips_cm),
-        length_cm: Number(garment.length_cm),
-        thigh_cm: Number(garment.thigh_cm),
       },
     };
   }
@@ -265,7 +260,6 @@ export function UserInfoPage({
       !product.category ||
       !product.region ||
       !product.fit_type ||
-      !product.material ||
       !product.size_label
     ) {
       setError(t("userInfo.selectAll"));
@@ -281,6 +275,7 @@ export function UserInfoPage({
 
     setLoading(true);
     let saveFailed = false;
+    let sizeProfile = null;
     try {
       await submitUserInfo(getUserPayload());
     } catch {
@@ -288,13 +283,25 @@ export function UserInfoPage({
     }
 
     try {
+      const sizeRes = await lookupSizeProfile({
+        category: product.category,
+        fitType: product.fit_type,
+        gender: body.gender,
+        region: product.region,
+        size: product.size_label,
+      });
+      sizeProfile = sizeRes?.data?.sizeProfile ?? null;
       if (email) sessionStorage.setItem("fitro_email", email);
-      setResult(analyzeFit(getFitParams()));
+      setResult(analyzeFit({ ...getFitParams(), sizeProfile }));
       if (saveFailed) {
         setError(t("userInfo.saveWarning"));
       }
-    } catch {
-      setError(t("userInfo.error"));
+    } catch (err) {
+      if (err?.response?.status === 404) {
+        setError(t("userInfo.sizeNotAvailable"));
+      } else {
+        setError(t("userInfo.error"));
+      }
     } finally {
       setLoading(false);
     }
@@ -323,6 +330,7 @@ export function UserInfoPage({
       });
 
     let aiImageUrl = null;
+    let sizeProfile = null;
     try {
       const garmentB64 = await toB64(images.garment);
       const bodyB64 = images.body ? await toB64(images.body) : null;
@@ -331,7 +339,6 @@ export function UserInfoPage({
         body_image_b64: bodyB64,
         category: product.category,
         fit_type: product.fit_type,
-        material: product.material,
       });
       aiImageUrl = data.image_url ?? null;
     } catch {
@@ -342,13 +349,25 @@ export function UserInfoPage({
     const garmentObjectUrl = URL.createObjectURL(images.garment);
 
     try {
+      const sizeRes = await lookupSizeProfile({
+        category: product.category,
+        fitType: product.fit_type,
+        gender: body.gender,
+        region: product.region,
+        size: product.size_label,
+      });
+      sizeProfile = sizeRes?.data?.sizeProfile ?? null;
       if (email) sessionStorage.setItem("fitro_email", email);
-      const fitResult = analyzeFit(getFitParams());
+      const fitResult = analyzeFit({ ...getFitParams(), sizeProfile });
       setTryOnImage(aiImageUrl ?? garmentObjectUrl);
       setResult(fitResult);
       if (saveFailed) setError(t("userInfo.saveWarning"));
-    } catch {
-      setError(t("userInfo.error"));
+    } catch (err) {
+      if (err?.response?.status === 404) {
+        setError(t("userInfo.sizeNotAvailable"));
+      } else {
+        setError(t("userInfo.error"));
+      }
     } finally {
       setImagesLoading(false);
     }
@@ -656,9 +675,6 @@ export function UserInfoPage({
               {t(`userInfo.${product.fit_type}`)}
             </span>
             <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
-              {t(`userInfo.${product.material}`)}
-            </span>
-            <span className="text-[11px] bg-gray-100 text-gray-500 px-3 py-1 rounded-full">
               {categoryLabel}
             </span>
           </div>
@@ -667,7 +683,6 @@ export function UserInfoPage({
             onClick={() => {
               setResult(null);
               setProduct({});
-              setGarment({});
               setImages({
                 body: null,
                 garment: null,
@@ -758,7 +773,6 @@ export function UserInfoPage({
           onClick={() => {
             setResult(null);
             setProduct({});
-            setGarment({});
             setPhase("mode");
           }}
           className={`w-full py-3 rounded-full ${btnGradient} text-white font-bold`}
@@ -840,7 +854,7 @@ export function UserInfoPage({
   return (
     <form
       onSubmit={handleAnalyze}
-      className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[760px] mx-4"
+      className="bg-white rounded-[45px] shadow-2xl p-8 w-full max-w-[640px] mx-4"
       style={{ animation: "scale-in 0.35s ease both" }}
     >
       <div className="flex flex-col items-center mb-5">
@@ -853,7 +867,7 @@ export function UserInfoPage({
         <p className="text-gray-400 text-xs mt-1">{t("userInfo.step2Sub")}</p>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-4">
         <div className="grid md:grid-cols-2 gap-5">
           <BtnGroup
             label={t("userInfo.category")}
@@ -869,7 +883,7 @@ export function UserInfoPage({
             label={t("userInfo.region")}
             value={product.region}
             onChange={(v) => setProductField("region", v)}
-            options={["EU", "US", "IT", "TU", "CH"].map((r) => ({
+            options={["EU", "US", "IT", "TR", "CH"].map((r) => ({
               value: r,
               label: r,
             }))}
@@ -884,77 +898,43 @@ export function UserInfoPage({
               { value: "oversized", label: t("userInfo.oversized") },
             ]}
           />
-          <BtnGroup
-            label={t("userInfo.material")}
-            value={product.material}
-            onChange={(v) => setProductField("material", v)}
-            options={[
-              { value: "cotton", label: t("userInfo.cotton") },
-              { value: "polyester", label: t("userInfo.polyester") },
-              { value: "denim", label: t("userInfo.denim") },
-              { value: "mixed", label: t("userInfo.mixed") },
-            ]}
-          />
         </div>
         <BtnGroup
           label={t("userInfo.sizeLabel")}
           value={product.size_label}
           onChange={(v) => setProductField("size_label", v)}
-          options={["XS", "S", "M", "L", "XL", "XXL"].map((s) => ({
-            value: s,
-            label: s,
-          }))}
+          options={
+            product.category === "pants"
+              ? [
+                  "24",
+                  "26",
+                  "28",
+                  "30",
+                  "32",
+                  "34",
+                  "36",
+                  "38",
+                  "40",
+                  "42",
+                  "44",
+                  "46",
+                  "48",
+                  "50",
+                  "52",
+                  "54",
+                  "56",
+                  "58",
+                  "60",
+                  "62",
+                  "64",
+                  "66",
+                ].map((s) => ({ value: s, label: s }))
+              : ["S", "M", "L", "XL", "XXL"].map((s) => ({
+                  value: s,
+                  label: s,
+                }))
+          }
         />
-
-        <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">
-          {t("userInfo.garmentMeasurements")}
-        </p>
-        {product.category !== "pants" && (
-          <div className="grid md:grid-cols-2 gap-3">
-            <Field
-              label={t("userInfo.garmentChest")}
-              type="number"
-              value={garment.chest_cm}
-              onChange={(v) => setGarmentField("chest_cm", v)}
-              required={!!product.category}
-            />
-            <Field
-              label={t("userInfo.length")}
-              type="number"
-              value={garment.length_cm}
-              onChange={(v) => setGarmentField("length_cm", v)}
-            />
-          </div>
-        )}
-        {product.category === "pants" && (
-          <div className="grid md:grid-cols-2 gap-3">
-            <Field
-              label={t("userInfo.garmentWaist")}
-              type="number"
-              value={garment.waist_cm}
-              onChange={(v) => setGarmentField("waist_cm", v)}
-              required
-            />
-            <Field
-              label={t("userInfo.garmentHips")}
-              type="number"
-              value={garment.hips_cm}
-              onChange={(v) => setGarmentField("hips_cm", v)}
-            />
-            <Field
-              label={t("userInfo.thigh")}
-              type="number"
-              value={garment.thigh_cm}
-              onChange={(v) => setGarmentField("thigh_cm", v)}
-            />
-            <Field
-              label={t("userInfo.length")}
-              type="number"
-              value={garment.length_cm}
-              onChange={(v) => setGarmentField("length_cm", v)}
-            />
-          </div>
-        )}
       </div>
 
       {error && (
