@@ -5,6 +5,7 @@ import { LandingPage } from "./pages/LandingPage";
 import { LoginPage } from "./pages/LoginPage";
 import { UserInfoPage } from "./pages/UserInfoPage";
 import { AdminPage } from "./pages/AdminPage";
+import { ProfilePage } from "./pages/ProfilePage";
 import { LangProvider } from "./context/LangContext";
 import { useLang } from "./context/useLang";
 import { lookupByEmail, registerUser } from "./services/api";
@@ -374,6 +375,10 @@ function AppContent() {
     navigate("userInfo");
   }
 
+  function openProfilePage() {
+    navigate("profile");
+  }
+
   function handleModalDone(phase, payload) {
     setShowModal(false);
     if (phase === "mode" && payload) {
@@ -462,6 +467,7 @@ function AppContent() {
         onUserLogin={() => setShowModal(true)}
         userProfile={userProfile}
         onOpenProfileForm={openProfileForm}
+        onOpenProfilePage={openProfilePage}
         onUserLogout={handleUserLogout}
       />
       {userNotice && (
@@ -494,6 +500,22 @@ function AppContent() {
               setUserNotice("Saved successfully");
               setTimeout(() => setUserNotice(""), 2000);
               navigate("landing");
+            }}
+          />
+        )}
+        {currentPage === "profile" && (
+          <ProfilePage
+            profile={userProfile}
+            onBack={() => navigate("landing")}
+            onProfileUpdated={(updatedProfile) => {
+              applyProfile({
+                name: updatedProfile.name,
+                email: updatedProfile.email,
+                body: updatedProfile.body,
+                hasMeasurements: true,
+              });
+              setUserNotice(t("profile.saved"));
+              setTimeout(() => setUserNotice(""), 2200);
             }}
           />
         )}

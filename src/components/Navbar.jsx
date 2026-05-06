@@ -13,6 +13,7 @@ export function Navbar({
   onUserLogin,
   userProfile,
   onOpenProfileForm,
+  onOpenProfilePage,
   onUserLogout,
 }) {
   const { t, lang, setLang } = useLang();
@@ -150,6 +151,15 @@ export function Navbar({
                   )}
                 </div>
                 <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setOpenUserMenu(false);
+                      onOpenProfilePage?.();
+                    }}
+                    className="cursor-pointer flex-1 border border-cyan-400/30 text-cyan-200 text-xs rounded-full px-3 py-2 hover:bg-cyan-500/10"
+                  >
+                    {t("profile.title")}
+                  </button>
                   {!userProfile.hasMeasurements && (
                     <button
                       onClick={() => {

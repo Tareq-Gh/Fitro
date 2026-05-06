@@ -191,6 +191,25 @@ export const en = {
     error: "Invalid username or password",
   },
 
+  profile: {
+    title: "Profile",
+    back: "Back",
+    edit: "Edit",
+    save: "Save",
+    saving: "Saving...",
+    cancel: "Cancel",
+    saved: "Profile updated successfully.",
+    saveError: "Couldn't save profile updates. Please try again.",
+    fixValidation: "Please fix invalid fields before saving.",
+    numberOnly: "Numbers only.",
+    requiredField: "This field is required.",
+    rangeError: "Value must be between {min} and {max}.",
+    optional: "Optional",
+    guestUser: "Guest User",
+    needAccount: "Sign in with your email to edit and save your profile.",
+    emailMissing: "No account email found. Please log in again.",
+  },
+
   admin: {
     title: "Admin Dashboard",
     subtitle: "FITRO User Management",
