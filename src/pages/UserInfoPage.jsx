@@ -187,6 +187,7 @@ export function UserInfoPage({
 
   const setBodyField = (k, v) => setBody((p) => ({ ...p, [k]: v }));
   const setProductField = (k, v) => setProduct((p) => ({ ...p, [k]: v }));
+  const hasValidGender = body.gender === "male" || body.gender === "female";
 
   const BackIcon = lang === "ar" ? ChevronRight : ChevronLeft;
 
@@ -234,7 +235,7 @@ export function UserInfoPage({
       sessionStorage.setItem("fitro_email", email);
       if (data.found) {
         const u = data.user;
-        setBody({
+        const loadedBody = {
           name: u.name ?? "",
           gender: u.gender ?? "",
           height_cm: u.height?.toString() ?? "",
@@ -243,9 +244,14 @@ export function UserInfoPage({
           shoulder_cm: u.shoulder?.toString() ?? "",
           waist_cm: u.waist?.toString() ?? "",
           hips_cm: u.hips?.toString() ?? "",
-        });
+        };
+        setBody(loadedBody);
         setWelcomeBack({ name: u.name });
-        setPhase("mode"); // profile loaded — skip body form
+        const readyForAnalyze =
+          (loadedBody.gender === "male" || loadedBody.gender === "female") &&
+          !!loadedBody.height_cm &&
+          !!loadedBody.weight_kg;
+        setPhase(readyForAnalyze ? "mode" : "body");
       } else {
         setWelcomeBack(null);
         setPhase("body"); // new user — collect measurements first
@@ -259,6 +265,11 @@ export function UserInfoPage({
 
   async function handleAnalyze(e) {
     e.preventDefault();
+    if (!hasValidGender) {
+      setError(t("userInfo.genderRequired"));
+      setPhase("body");
+      return;
+    }
     if (
       !product.category ||
       !product.region ||
@@ -302,6 +313,8 @@ export function UserInfoPage({
     } catch (err) {
       if (err?.response?.status === 404) {
         setError(t("userInfo.sizeNotAvailable"));
+      } else if (err?.response?.status === 400) {
+        setError(t("userInfo.genderRequired"));
       } else {
         setError(t("userInfo.error"));
       }
@@ -311,6 +324,11 @@ export function UserInfoPage({
   }
 
   async function handleTryOnAnalyze() {
+    if (!hasValidGender) {
+      setError(t("userInfo.genderRequired"));
+      setPhase("body");
+      return;
+    }
     if (!images.garment) {
       setError(t("userInfo.garmentPhotoRequired"));
       return;
@@ -368,6 +386,8 @@ export function UserInfoPage({
     } catch (err) {
       if (err?.response?.status === 404) {
         setError(t("userInfo.sizeNotAvailable"));
+      } else if (err?.response?.status === 400) {
+        setError(t("userInfo.genderRequired"));
       } else {
         setError(t("userInfo.error"));
       }

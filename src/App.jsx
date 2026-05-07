@@ -67,7 +67,11 @@ function AnalyzeModal({ onClose, onDone, landingGenderHint = "" }) {
           waist_cm: u.waist?.toString() ?? "",
           hips_cm: u.hips?.toString() ?? "",
         };
-        const hasMeasurements = !!(u.height && u.weight);
+        const hasMeasurements = !!(
+          u.height &&
+          u.weight &&
+          (u.gender === "male" || u.gender === "female")
+        );
         onDone(hasMeasurements ? "mode" : "loginNoBody", {
           name: u.name,
           email: trimmedEmail,
@@ -354,7 +358,11 @@ function AppContent() {
               waist_cm: u.waist?.toString() ?? "",
               hips_cm: u.hips?.toString() ?? "",
             },
-            hasMeasurements: !!(u.height && u.weight),
+            hasMeasurements: !!(
+              u.height &&
+              u.weight &&
+              (u.gender === "male" || u.gender === "female")
+            ),
           });
         } else {
           // Email in session but no DB record — clear stale session key.
