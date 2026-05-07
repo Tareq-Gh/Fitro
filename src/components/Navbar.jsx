@@ -142,6 +142,7 @@ export function Navbar({
                           {t("nav.profileMeasurements")}:
                         </span>{" "}
                         {userProfile.body?.chest_cm || "-"} /{" "}
+                        {userProfile.body?.shoulder_cm || "-"} /{" "}
                         {userProfile.body?.waist_cm || "-"} /{" "}
                         {userProfile.body?.hips_cm || "-"}
                       </p>

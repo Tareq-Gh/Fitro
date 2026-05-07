@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { Navbar } from "./components/Navbar";
 import { Footer } from "./components/Footer";
 import { LandingPage } from "./pages/LandingPage";
@@ -13,7 +13,7 @@ import { Mail, User, X } from "lucide-react";
 import { btnGradient } from "./constants";
 import { LoadingDots } from "./components/LoadingDots";
 
-function AnalyzeModal({ onClose, onDone }) {
+function AnalyzeModal({ onClose, onDone, landingGenderHint = "" }) {
   const { t } = useLang();
   const [tab, setTab] = useState("login"); // "login" | "register"
   const [email, setEmail] = useState(
@@ -24,6 +24,12 @@ function AnalyzeModal({ onClose, onDone }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    if (landingGenderHint === "male" || landingGenderHint === "female") {
+      setGender((prev) => prev || landingGenderHint);
+    }
+  }, [landingGenderHint]);
 
   function switchTab(next) {
     setTab(next);
@@ -47,12 +53,17 @@ function AnalyzeModal({ onClose, onDone }) {
       console.log("Login response:", { status: response.status, data });
       if (data.found) {
         const u = data.user;
+        const hinted =
+          landingGenderHint === "male" || landingGenderHint === "female"
+            ? landingGenderHint
+            : "";
         const bodyData = {
           name: u.name ?? "",
-          gender: u.gender ?? "",
+          gender: u.gender ?? hinted ?? "",
           height_cm: u.height?.toString() ?? "",
           weight_kg: u.weight?.toString() ?? "",
           chest_cm: u.chest?.toString() ?? "",
+          shoulder_cm: u.shoulder?.toString() ?? "",
           waist_cm: u.waist?.toString() ?? "",
           hips_cm: u.hips?.toString() ?? "",
         };
@@ -309,6 +320,18 @@ function AppContent() {
     }
   });
   const [userNotice, setUserNotice] = useState("");
+  const analyzeGenderRef = useRef("");
+  const [analyzeGenderPrefill, setAnalyzeGenderPrefill] = useState("");
+
+  function mergeAnalyzeGender(body) {
+    const b = { ...(body ?? {}) };
+    const hint =
+      analyzeGenderRef.current === "male" || analyzeGenderRef.current === "female"
+        ? analyzeGenderRef.current
+        : "";
+    if (hint && !b.gender) b.gender = hint;
+    return b;
+  }
 
   // On mount: restore session from DB using stored email.
   useEffect(() => {
@@ -327,6 +350,7 @@ function AppContent() {
               height_cm: u.height?.toString() ?? "",
               weight_kg: u.weight?.toString() ?? "",
               chest_cm: u.chest?.toString() ?? "",
+              shoulder_cm: u.shoulder?.toString() ?? "",
               waist_cm: u.waist?.toString() ?? "",
               hips_cm: u.hips?.toString() ?? "",
             },
@@ -354,13 +378,37 @@ function AppContent() {
     setUserProfile(profile);
   }
 
-  function openAnalyze() {
+  function openAnalyze(options = {}) {
+    const clicked = options?.gender;
+    const profileGenderOk =
+      userProfile?.body?.gender === "male" ||
+      userProfile?.body?.gender === "female";
+    const stored = profileGenderOk ? userProfile.body.gender : "";
+    const effective =
+      clicked === "male" || clicked === "female" ? clicked : stored;
+
+    if (effective !== "male" && effective !== "female") {
+      return;
+    }
+
+    analyzeGenderRef.current = effective;
+    setAnalyzeGenderPrefill(effective);
+
     if (userProfile?.hasMeasurements) {
-      // already identified — skip modal, go straight to mode selection
+      if (!profileGenderOk) {
+        applyProfile({
+          ...userProfile,
+          body: { ...userProfile.body, gender: effective },
+        });
+      }
       setUserInfoPhase("mode");
       setUserInfoWelcome({ name: userProfile.name || "User" });
       navigate("userInfo");
     } else if (userProfile && !userProfile.hasMeasurements) {
+      applyProfile({
+        ...userProfile,
+        body: mergeAnalyzeGender(userProfile.body ?? {}),
+      });
       setUserInfoPhase("body");
       setUserInfoWelcome(null);
       navigate("userInfo");
@@ -386,7 +434,7 @@ function AppContent() {
       const p = {
         name: payload.name ?? "",
         email: payload.email ?? sessionStorage.getItem("fitro_email") ?? "",
-        body: payload.body ?? {},
+        body: mergeAnalyzeGender(payload.body ?? {}),
         hasMeasurements: true,
       };
       applyProfile(p);
@@ -398,7 +446,7 @@ function AppContent() {
       applyProfile({
         name: payload.name ?? "",
         email: payload.email,
-        body: payload.body ?? {},
+        body: mergeAnalyzeGender(payload.body ?? {}),
         hasMeasurements: false,
       });
       setUserNotice(t("userInfo.welcomeBackNotice"));
@@ -411,7 +459,10 @@ function AppContent() {
       applyProfile({
         name: payload.name ?? "",
         email: payload.email,
-        body: { name: payload.name ?? "", gender: payload.gender ?? "" },
+        body: mergeAnalyzeGender({
+          name: payload.name ?? "",
+          gender: payload.gender ?? "",
+        }),
         hasMeasurements: false,
       });
       setUserNotice(t("userInfo.accountCreatedNotice"));
@@ -424,6 +475,8 @@ function AppContent() {
       setUserInfoWelcome(payload ?? null);
       navigate("userInfo");
     }
+    analyzeGenderRef.current = "";
+    setAnalyzeGenderPrefill("");
   }
 
   function handleUserLogout() {
@@ -464,7 +517,11 @@ function AppContent() {
     >
       <Navbar
         onNavigate={navigate}
-        onUserLogin={() => setShowModal(true)}
+        onUserLogin={() => {
+          analyzeGenderRef.current = "";
+          setAnalyzeGenderPrefill("");
+          setShowModal(true);
+        }}
         userProfile={userProfile}
         onOpenProfileForm={openProfileForm}
         onOpenProfilePage={openProfilePage}
@@ -481,7 +538,10 @@ function AppContent() {
         }`}
       >
         {currentPage === "landing" && (
-          <LandingPage onNavigate={navigate} onAnalyze={openAnalyze} />
+          <LandingPage
+            prefilledGender={userProfile?.body?.gender ?? ""}
+            onAnalyze={openAnalyze}
+          />
         )}
         {currentPage === "login" && <LoginPage onLogin={handleLogin} />}
         {currentPage === "userInfo" && (
@@ -524,6 +584,7 @@ function AppContent() {
       {isLanding && <Footer onNavigate={navigate} />}
       {showModal && (
         <AnalyzeModal
+          landingGenderHint={analyzeGenderPrefill}
           onClose={() => setShowModal(false)}
           onDone={handleModalDone}
         />

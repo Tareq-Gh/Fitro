@@ -13,7 +13,7 @@ export const en = {
     profileName: "Name",
     profileHeight: "Height",
     profileWeight: "Weight",
-    profileMeasurements: "Chest / Waist / Hips",
+    profileMeasurements: "Chest / Shoulder / Waist / Hips",
     noBodyData: "No body data yet.",
     fillUserData: "Fill User Data",
   },
@@ -34,7 +34,7 @@ export const en = {
       {
         num: "01",
         title: "Enter Your Measurements",
-        desc: "Height, weight, chest, waist, hips.",
+        desc: "Height, weight, chest, shoulder, waist, hips.",
       },
       {
         num: "02",
@@ -56,7 +56,7 @@ export const en = {
       },
       {
         title: "Instant Analysis",
-        desc: "Our engine calculates fit ease across chest, waist, and hips in milliseconds.",
+        desc: "Our engine calculates fit ease across chest, shoulder, waist, and hips in milliseconds.",
       },
       {
         title: "Multi-Region",
@@ -70,6 +70,12 @@ export const en = {
     ctaBandTitle: "Ready to find your fit?",
     ctaBandSub: "It takes less than 2 minutes. No account needed.",
     ctaBandBtn: "Get My Fit Analysis →",
+    comparisonTitle: "Fit comparison",
+    comparisonSub:
+      "Choose your gender for accurate sizing, then continue to measurements and garment choices.",
+    comparisonGenderLabel: "Gender",
+    chooseGender:
+      "Please select your gender before continuing (needed for chart lookup).",
   },
 
   userInfo: {
@@ -84,6 +90,7 @@ export const en = {
     height: "Height (cm)",
     weight: "Weight (kg)",
     chest: "Chest (cm)",
+    shoulder: "Shoulder width (cm)",
     waist: "Waist (cm)",
     hips: "Hips (cm)",
     next: "Next",
@@ -213,6 +220,7 @@ export const en = {
     colHeight: "Height",
     colWeight: "Weight",
     colChest: "Chest",
+    colShoulder: "Shoulder",
     colDate: "Date",
     loading: "Loading...",
     loadError: "Failed to load users",

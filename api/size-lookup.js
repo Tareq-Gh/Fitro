@@ -114,15 +114,23 @@ function toSizeProfile(category, row) {
     row.chest_cm ??
     null;
 
+  const rawShoulder =
+    row["Shoulder Width (cm)"] ??
+    row["Shoulder breadth (cm)"] ??
+    row.Shoulder_Width_cm ??
+    row.shoulder_cm ??
+    null;
+
   return {
     chestRange: parseRange(rawChest),
+    shoulderRange: parseRange(rawShoulder),
   };
 }
 
 function hasUsableData(category, profile) {
   if (!profile) return false;
   if (category === "pants") return !!(profile.waistRange && profile.hipRange);
-  return !!profile.chestRange;
+  return !!(profile.chestRange || profile.shoulderRange);
 }
 
 export default async function handler(req, res) {

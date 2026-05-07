@@ -8,6 +8,7 @@ const FIELD_CONFIG = [
   { key: "height_cm", labelKey: "height", unit: "cm", required: true, min: 90, max: 260 },
   { key: "weight_kg", labelKey: "weight", unit: "kg", required: true, min: 25, max: 350 },
   { key: "chest_cm", labelKey: "chest", unit: "cm", required: false, min: 40, max: 220 },
+  { key: "shoulder_cm", labelKey: "shoulder", unit: "cm", required: false, min: 30, max: 70 },
   { key: "waist_cm", labelKey: "waist", unit: "cm", required: false, min: 35, max: 220 },
   { key: "hips_cm", labelKey: "hips", unit: "cm", required: false, min: 40, max: 240 },
 ];
@@ -58,6 +59,7 @@ export function ProfilePage({ profile, onBack, onProfileUpdated }) {
     height_cm: profile?.body?.height_cm ?? "",
     weight_kg: profile?.body?.weight_kg ?? "",
     chest_cm: profile?.body?.chest_cm ?? "",
+    shoulder_cm: profile?.body?.shoulder_cm ?? "",
     waist_cm: profile?.body?.waist_cm ?? "",
     hips_cm: profile?.body?.hips_cm ?? "",
   }));
@@ -86,6 +88,7 @@ export function ProfilePage({ profile, onBack, onProfileUpdated }) {
       height_cm: profile?.body?.height_cm ?? "",
       weight_kg: profile?.body?.weight_kg ?? "",
       chest_cm: profile?.body?.chest_cm ?? "",
+      shoulder_cm: profile?.body?.shoulder_cm ?? "",
       waist_cm: profile?.body?.waist_cm ?? "",
       hips_cm: profile?.body?.hips_cm ?? "",
     });
@@ -118,6 +121,7 @@ export function ProfilePage({ profile, onBack, onProfileUpdated }) {
         height: Number(form.height_cm),
         weight: Number(form.weight_kg),
         chest: toNumOrUndefined(form.chest_cm),
+        shoulder: toNumOrUndefined(form.shoulder_cm),
         waist: toNumOrUndefined(form.waist_cm),
         hips: toNumOrUndefined(form.hips_cm),
       });
@@ -131,6 +135,7 @@ export function ProfilePage({ profile, onBack, onProfileUpdated }) {
           height_cm: `${form.height_cm}`,
           weight_kg: `${form.weight_kg}`,
           chest_cm: `${form.chest_cm ?? ""}`,
+          shoulder_cm: `${form.shoulder_cm ?? ""}`,
           waist_cm: `${form.waist_cm ?? ""}`,
           hips_cm: `${form.hips_cm ?? ""}`,
         },

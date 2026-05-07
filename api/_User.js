@@ -13,6 +13,7 @@ const schema = new mongoose.Schema({
   height: { type: Number },
   weight: { type: Number },
   chest: Number,
+  shoulder: Number,
   waist: Number,
   hips: Number,
   createdAt: { type: Date, default: Date.now },

@@ -13,7 +13,7 @@ export const ar = {
     profileName: "الاسم",
     profileHeight: "الطول",
     profileWeight: "الوزن",
-    profileMeasurements: "الصدر / الخصر / الوركين",
+    profileMeasurements: "الصدر / الكتف / الخصر / الوركين",
     noBodyData: "لا توجد بيانات جسم بعد.",
     fillUserData: "أكمل البيانات",
   },
@@ -34,7 +34,7 @@ export const ar = {
       {
         num: "٠١",
         title: "أدخل مقاساتك",
-        desc: "الطول، الوزن، الصدر، الخصر، الوركين.",
+        desc: "الطول، الوزن، الصدر، الكتف، الخصر، الوركين.",
       },
       {
         num: "٠٢",
@@ -56,7 +56,7 @@ export const ar = {
       },
       {
         title: "تحليل فوري",
-        desc: "يحسب محركنا فارق المقاس للصدر والخصر والوركين في ثوانٍ.",
+        desc: "يحسب محركنا فارق المقاس للصدر والكتف والخصر والوركين في ثوانٍ.",
       },
       {
         title: "متعدد المناطق",
@@ -70,6 +70,11 @@ export const ar = {
     ctaBandTitle: "هل أنت جاهز؟",
     ctaBandSub: "أقل من دقيقتين. لا حاجة لحساب.",
     ctaBandBtn: "← احصل على تحليلك",
+    comparisonTitle: "مقارنة المقاس",
+    comparisonSub:
+      "اختر جنسك لحساب دقيق، ثم تابع إلى القياسات ونوع القطعة.",
+    comparisonGenderLabel: "الجنس",
+    chooseGender: "يرجى اختيار الجنس قبل المتابعة (مطلوب لجدول المقاسات).",
   },
 
   userInfo: {
@@ -84,6 +89,7 @@ export const ar = {
     height: "الطول (سم)",
     weight: "الوزن (كجم)",
     chest: "الصدر (سم)",
+    shoulder: "عرض الكتفين (سم)",
     waist: "الخصر (سم)",
     hips: "الوركين (سم)",
     next: "التالي",
@@ -210,6 +216,7 @@ export const ar = {
     colHeight: "الطول",
     colWeight: "الوزن",
     colChest: "الصدر",
+    colShoulder: "الكتف",
     colDate: "التاريخ",
     loading: "جاري التحميل...",
     loadError: "فشل تحميل المستخدمين",

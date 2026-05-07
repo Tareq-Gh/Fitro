@@ -68,9 +68,11 @@ function buildExplanationAr({
   bodyWaist,
   bodyHips,
   bodyChest,
+  bodyShoulder,
   waistRange,
   hipRange,
   chestRange,
+  shoulderRange,
   fitType,
   fitResult,
   region,
@@ -78,7 +80,18 @@ function buildExplanationAr({
 }) {
   const isUpper = !isPants(category);
   if (isUpper) {
-    return `تمت مقارنة قياس الصدر (${bodyChest} سم) مع جدول المقاس ${sizeLabel} لمنطقة ${region} ونوع القصّة ${fitType}. نطاق الصدر للمقاس المختار هو ${chestRange.min} إلى ${chestRange.max} سم، والتصنيف النهائي هو "${fitResult}".`;
+    const bits = [];
+    if (chestRange && Number.isFinite(bodyChest)) {
+      bits.push(
+        `الصدر (${bodyChest} سم) أمام النطاق ${chestRange.min}-${chestRange.max} سم`,
+      );
+    }
+    if (shoulderRange && Number.isFinite(bodyShoulder)) {
+      bits.push(
+        `عرض الكتفين (${bodyShoulder} سم) أمام النطاق ${shoulderRange.min}-${shoulderRange.max} سم`,
+      );
+    }
+    return `تمت المقارنة (${bits.join("؛ ")}) لجدول ${sizeLabel} — ${region} — ${fitType}. التصنيف: "${fitResult}".`;
   }
   return `تمت مقارنة الخصر (${bodyWaist} سم) والورك (${bodyHips} سم) مع جدول المقاس ${sizeLabel} لمنطقة ${region} ونوع القصّة ${fitType}. نطاق الخصر هو ${waistRange.min}-${waistRange.max} سم ونطاق الورك هو ${hipRange.min}-${hipRange.max} سم، والتصنيف النهائي هو "${fitResult}".`;
 }
@@ -88,9 +101,11 @@ function buildExplanation({
   bodyWaist,
   bodyHips,
   bodyChest,
+  bodyShoulder,
   waistRange,
   hipRange,
   chestRange,
+  shoulderRange,
   fitType,
   fitResult,
   region,
@@ -98,7 +113,18 @@ function buildExplanation({
 }) {
   const isUpper = !isPants(category);
   if (isUpper) {
-    return `Compared chest (${bodyChest} cm) against ${region} ${fitType} ${sizeLabel}. Selected size chest range is ${chestRange.min}-${chestRange.max} cm. Final status: "${fitResult}".`;
+    const bits = [];
+    if (chestRange && Number.isFinite(bodyChest)) {
+      bits.push(
+        `chest ${bodyChest} cm vs chart ${chestRange.min}-${chestRange.max} cm`,
+      );
+    }
+    if (shoulderRange && Number.isFinite(bodyShoulder)) {
+      bits.push(
+        `shoulder ${bodyShoulder} cm vs chart ${shoulderRange.min}-${shoulderRange.max} cm`,
+      );
+    }
+    return `Compared ${bits.join("; ")} for ${region} ${fitType} ${sizeLabel}. Final status: "${fitResult}".`;
   }
   return `Compared waist (${bodyWaist} cm) and hips (${bodyHips} cm) against ${region} ${fitType} ${sizeLabel}. Waist range is ${waistRange.min}-${waistRange.max} cm and hip range is ${hipRange.min}-${hipRange.max} cm. Final status: "${fitResult}".`;
 }
@@ -127,11 +153,12 @@ function buildAdviceAr({ fitResult, fitType }) {
 }
 
 export function analyzeFit({ user, product, sizeProfile }) {
-  const { chest_cm, waist_cm, hips_cm } = user ?? {};
+  const { chest_cm, shoulder_cm, waist_cm, hips_cm } = user ?? {};
   const { category, region, fit_type, size_label } = product ?? {};
 
   const isUpper = !isPants(category);
   const bodyChest = Number(chest_cm);
+  const bodyShoulder = Number(shoulder_cm);
   const bodyWaist = Number(waist_cm);
   const bodyHips = Number(hips_cm);
   const fitType = (fit_type ?? "regular").toLowerCase();
@@ -153,10 +180,38 @@ export function analyzeFit({ user, product, sizeProfile }) {
   const waistRange = sizeProfile.waistRange;
   const hipRange = sizeProfile.hipRange;
   const chestRange = sizeProfile.chestRange;
+  const shoulderRange = sizeProfile.shoulderRange;
 
   let fitResult = "Perfect Fit";
   if (isUpper) {
-    fitResult = classifyAgainstRange(bodyChest, chestRange, fitType);
+    const chestFit =
+      chestRange && Number.isFinite(bodyChest)
+        ? classifyAgainstRange(bodyChest, chestRange, fitType)
+        : null;
+    const shoulderFit =
+      shoulderRange && Number.isFinite(bodyShoulder)
+        ? classifyAgainstRange(bodyShoulder, shoulderRange, fitType)
+        : null;
+    const parts = [chestFit, shoulderFit].filter(Boolean);
+    if (parts.length === 0) {
+      return {
+        fit_result: null,
+        confidence: "Low",
+        explanation:
+          "We could not compare your upper-body measurements against this chart: add chest and/or shoulder (cm) matching the chart, or pick another item.",
+        advice:
+          "Fill in chest and/or shoulder measurements that correspond to columns in the size chart.",
+        explanation_ar:
+          "تعذّرت المقارنة لمقاسات الجزء العلوي: أضف قياس الصدر و/أو الكتف (سم) كما في الجدول، أو اختر قطعة أخرى.",
+        advice_ar:
+          "أدخل مقاس الصدر و/أو عرض الكتفين وفقاً لأعمدة جدول المقاسات.",
+        short_description:
+          "Add chest or shoulder measurements to compare tops and shirts.",
+        short_description_ar:
+          "أضف قياس الصدر أو الكتف لمقارنة التيشرتات والقمصان.",
+      };
+    }
+    fitResult = worstFit(...parts);
   } else {
     const waistFit = classifyAgainstRange(bodyWaist, waistRange, fitType);
     const hipsFit = classifyAgainstRange(bodyHips, hipRange, fitType);
@@ -170,9 +225,11 @@ export function analyzeFit({ user, product, sizeProfile }) {
     bodyWaist,
     bodyHips,
     bodyChest,
+    bodyShoulder,
     waistRange,
     hipRange,
     chestRange,
+    shoulderRange,
     fitType,
     fitResult,
     region,
@@ -189,9 +246,11 @@ export function analyzeFit({ user, product, sizeProfile }) {
     bodyWaist,
     bodyHips,
     bodyChest,
+    bodyShoulder,
     waistRange,
     hipRange,
     chestRange,
+    shoulderRange,
     fitType,
     fitResult,
     region,

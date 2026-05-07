@@ -4,7 +4,7 @@ import { verifyToken } from "./_auth.js";
 
 export default async function handler(req, res) {
   if (req.method === "POST") {
-    const { name, gender, height, weight, chest, waist, hips, email } =
+    const { name, gender, height, weight, chest, shoulder, waist, hips, email } =
       req.body ?? {};
 
     if (!name || !height || !weight) {
@@ -24,6 +24,7 @@ export default async function handler(req, res) {
       height: Number(height),
       weight: Number(weight),
       chest: toNum(chest),
+      shoulder: toNum(shoulder),
       waist: toNum(waist),
       hips: toNum(hips),
     };

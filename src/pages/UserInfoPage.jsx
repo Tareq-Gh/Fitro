@@ -199,6 +199,7 @@ export function UserInfoPage({
       weight: Number(body.weight_kg),
       gender: body.gender,
       chest: parseNum(body.chest_cm),
+      shoulder: parseNum(body.shoulder_cm),
       waist: parseNum(body.waist_cm),
       hips: parseNum(body.hips_cm),
     };
@@ -212,6 +213,7 @@ export function UserInfoPage({
         height_cm: Number(body.height_cm),
         weight_kg: Number(body.weight_kg),
         chest_cm: Number(body.chest_cm),
+        shoulder_cm: Number(body.shoulder_cm),
         waist_cm: Number(body.waist_cm),
         hips_cm: Number(body.hips_cm),
       },
@@ -238,6 +240,7 @@ export function UserInfoPage({
           height_cm: u.height?.toString() ?? "",
           weight_kg: u.weight?.toString() ?? "",
           chest_cm: u.chest?.toString() ?? "",
+          shoulder_cm: u.shoulder?.toString() ?? "",
           waist_cm: u.waist?.toString() ?? "",
           hips_cm: u.hips?.toString() ?? "",
         });
@@ -497,6 +500,12 @@ export function UserInfoPage({
             type="number"
             value={body.chest_cm}
             onChange={(v) => setBodyField("chest_cm", v)}
+          />
+          <Field
+            label={t("userInfo.shoulder")}
+            type="number"
+            value={body.shoulder_cm}
+            onChange={(v) => setBodyField("shoulder_cm", v)}
           />
           <Field
             label={t("userInfo.waist")}

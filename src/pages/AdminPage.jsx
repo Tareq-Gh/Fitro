@@ -106,13 +106,14 @@ export function AdminPage({ token }) {
                   <th className="p-5">{t("admin.colHeight")}</th>
                   <th className="p-5">{t("admin.colWeight")}</th>
                   <th className="p-5">{t("admin.colChest")}</th>
+                  <th className="p-5">{t("admin.colShoulder")}</th>
                   <th className="p-5">{t("admin.colDate")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="p-8 text-center text-gray-500">
+                    <td colSpan={6} className="p-8 text-center text-gray-500">
                       {t("admin.noUsers")}
                     </td>
                   </tr>
@@ -127,6 +128,9 @@ export function AdminPage({ token }) {
                       <td className="p-5 text-gray-300">{user.weight} kg</td>
                       <td className="p-5 text-gray-300">
                         {user.chest ?? "—"} cm
+                      </td>
+                      <td className="p-5 text-gray-300">
+                        {user.shoulder ?? "—"} cm
                       </td>
                       <td className="p-5 text-gray-400">
                         {new Date(user.createdAt).toLocaleDateString()}

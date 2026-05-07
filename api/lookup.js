@@ -15,7 +15,7 @@ export default async function handler(req, res) {
   }
 
   const user = await User.findOne({ email }).select(
-    "name gender height weight chest waist hips email -_id",
+    "name gender height weight chest shoulder waist hips email -_id",
   );
 
   if (!user) return res.json({ found: false });
