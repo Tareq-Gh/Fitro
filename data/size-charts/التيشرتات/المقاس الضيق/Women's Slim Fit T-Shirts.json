@@ -1,0 +1,39 @@
+{
+  "womens_slim_fit": {
+    "US": [
+      { "size": "S", "chest_cm": "80-84", "shoulder_cm": 35, "body_height_cm": "155-163", "weight_kg": "45-53" },
+      { "size": "M", "chest_cm": "86-90", "shoulder_cm": 37, "body_height_cm": "163-168", "weight_kg": "53-61" },
+      { "size": "L", "chest_cm": "92-96", "shoulder_cm": 39, "body_height_cm": "168-173", "weight_kg": "61-69" },
+      { "size": "XL", "chest_cm": "98-104", "shoulder_cm": 41, "body_height_cm": "173-178", "weight_kg": "69-77" },
+      { "size": "XXL", "chest_cm": "106-112", "shoulder_cm": 43, "body_height_cm": "178-185", "weight_kg": "77-85" }
+    ],
+    "TR": [
+      { "size": "S", "chest_cm": "78-82", "shoulder_cm": 34, "body_height_cm": "150-158", "weight_kg": "44-52" },
+      { "size": "M", "chest_cm": "84-88", "shoulder_cm": 36, "body_height_cm": "158-165", "weight_kg": "52-60" },
+      { "size": "L", "chest_cm": "90-94", "shoulder_cm": 38, "body_height_cm": "165-170", "weight_kg": "60-68" },
+      { "size": "XL", "chest_cm": "96-100", "shoulder_cm": 40, "body_height_cm": "170-175", "weight_kg": "68-76" },
+      { "size": "XXL", "chest_cm": "102-108", "shoulder_cm": 42, "body_height_cm": "175-180", "weight_kg": "76-84" }
+    ],
+    "EU": [
+      { "size": "S", "chest_cm": "80-84", "shoulder_cm": 34, "body_height_cm": "155-162", "weight_kg": "42-52" },
+      { "size": "M", "chest_cm": "86-90", "shoulder_cm": 36, "body_height_cm": "162-168", "weight_kg": "52-62" },
+      { "size": "L", "chest_cm": "92-96", "shoulder_cm": 38, "body_height_cm": "168-173", "weight_kg": "62-72" },
+      { "size": "XL", "chest_cm": "98-104", "shoulder_cm": 40, "body_height_cm": "173-178", "weight_kg": "72-82" },
+      { "size": "XXL", "chest_cm": "106-112", "shoulder_cm": 42, "body_height_cm": "178-183", "weight_kg": "82-92" }
+    ],
+    "IT": [
+      { "size": "S", "chest_cm": "76", "shoulder_cm": 33, "body_height_cm": "150-160", "weight_kg": "38-48" },
+      { "size": "M", "chest_cm": "80", "shoulder_cm": 35, "body_height_cm": "160-165", "weight_kg": "48-58" },
+      { "size": "L", "chest_cm": "84", "shoulder_cm": 37, "body_height_cm": "165-170", "weight_kg": "58-68" },
+      { "size": "XL", "chest_cm": "88", "shoulder_cm": 39, "body_height_cm": "170-175", "weight_kg": "68-78" },
+      { "size": "XXL", "chest_cm": "92", "shoulder_cm": 41, "body_height_cm": "175-180", "weight_kg": "78-88" }
+    ],
+    "CH": [
+      { "size": "S", "chest_cm": "72", "shoulder_cm": 32, "body_height_cm": "145-153", "weight_kg": "32-42" },
+      { "size": "M", "chest_cm": "76", "shoulder_cm": 34, "body_height_cm": "153-158", "weight_kg": "42-52" },
+      { "size": "L", "chest_cm": "80", "shoulder_cm": 36, "body_height_cm": "158-163", "weight_kg": "52-62" },
+      { "size": "XL", "chest_cm": "84", "shoulder_cm": 38, "body_height_cm": "163-168", "weight_kg": "62-72" },
+      { "size": "XXL", "chest_cm": "88", "shoulder_cm": 40, "body_height_cm": "168-175", "weight_kg": "72-82" }
+    ]
+  }
+}

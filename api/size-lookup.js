@@ -1,48 +1,52 @@
 import fs from "node:fs/promises";
+import path from "node:path";
 
-const BASE = "G:/TM471 - Part 2/المقاسات json";
+const BASE = process.env.SIZE_TABLES_BASE?.trim()
+  ? process.env.SIZE_TABLES_BASE.trim()
+  : path.join(process.cwd(), "data", "size-charts");
+const fromBase = (...parts) => path.join(BASE, ...parts);
 
 const TABLE_PATHS = {
   pants: {
     slim: {
-      male: `${BASE}/البناطيل/all/fitro_slim_fit_pants_men.json`,
-      female: `${BASE}/البناطيل/all/fitro_slim_fit_pants_women.json`,
+      male: fromBase("البناطيل", "all", "fitro_slim_fit_pants_men.json"),
+      female: fromBase("البناطيل", "all", "fitro_slim_fit_pants_women.json"),
     },
     regular: {
-      male: `${BASE}/البناطيل/all/fitro_regular_pants_men.json`,
-      female: `${BASE}/البناطيل/all/fitro_regular_pants_women.json`,
+      male: fromBase("البناطيل", "all", "fitro_regular_pants_men.json"),
+      female: fromBase("البناطيل", "all", "fitro_regular_pants_women.json"),
     },
     oversized: {
-      male: `${BASE}/البناطيل/all/fitro_oversize_pants_men.json`,
-      female: `${BASE}/البناطيل/all/fitro_oversize_pants_women.json`,
+      male: fromBase("البناطيل", "all", "fitro_oversize_pants_men.json"),
+      female: fromBase("البناطيل", "all", "fitro_oversize_pants_women.json"),
     },
   },
   tshirt: {
     slim: {
-      male: `${BASE}/التيشرتات/all/Men's Slim Fit T-Shirts.json`,
-      female: `${BASE}/التيشرتات/all/Women's Slim Fit T-Shirts.json`,
+      male: fromBase("التيشرتات", "all", "Men's Slim Fit T-Shirts.json"),
+      female: fromBase("التيشرتات", "all", "Women's Slim Fit T-Shirts.json"),
     },
     regular: {
-      male: `${BASE}/التيشرتات/all/Men_s_Regular_T-Shirt_Chart.json`,
-      female: `${BASE}/التيشرتات/all/Women_s_Regular_T-Shirt_Chart.json`,
+      male: fromBase("التيشرتات", "all", "Men_s_Regular_T-Shirt_Chart.json"),
+      female: fromBase("التيشرتات", "all", "Women_s_Regular_T-Shirt_Chart.json"),
     },
     oversized: {
-      male: `${BASE}/التيشرتات/all/Men's Oversize Fit T-Shirts.json`,
-      female: `${BASE}/التيشرتات/all/Women's Oversize Fit T-Shirts .json`,
+      male: fromBase("التيشرتات", "all", "Men's Oversize Fit T-Shirts.json"),
+      female: fromBase("التيشرتات", "all", "Women's Oversize Fit T-Shirts .json"),
     },
   },
   shirt: {
     slim: {
-      male: `${BASE}/القمصان/all/fitro_slim_shirts_men.json`,
-      female: `${BASE}/القمصان/all/fitro_slim_shirts_women.json`,
+      male: fromBase("القمصان", "all", "fitro_slim_shirts_men.json"),
+      female: fromBase("القمصان", "all", "fitro_slim_shirts_women.json"),
     },
     regular: {
-      male: `${BASE}/القمصان/all/fitro_regular_shirts_men.json`,
-      female: `${BASE}/القمصان/all/fitro_regular_shirts_women.json`,
+      male: fromBase("القمصان", "all", "fitro_regular_shirts_men.json"),
+      female: fromBase("القمصان", "all", "fitro_regular_shirts_women.json"),
     },
     oversized: {
-      male: `${BASE}/القمصان/all/fitro_oversize_shirts_men.json`,
-      female: `${BASE}/القمصان/all/fitro_oversize_shirts_women.json`,
+      male: fromBase("القمصان", "all", "fitro_oversize_shirts_men.json"),
+      female: fromBase("القمصان", "all", "fitro_oversize_shirts_women.json"),
     },
   },
 };

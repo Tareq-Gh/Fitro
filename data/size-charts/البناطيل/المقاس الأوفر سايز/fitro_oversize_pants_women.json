@@ -1,0 +1,432 @@
+{
+  "US_UK": [
+    {
+      "size": 28,
+      "waist_cm": "64 - 68",
+      "hip_cm": "91 - 97",
+      "body_height_cm": "155 - 165",
+      "weight_kg": "49 - 60"
+    },
+    {
+      "size": 30,
+      "waist_cm": "69 - 73",
+      "hip_cm": "96 - 102",
+      "body_height_cm": "157 - 167",
+      "weight_kg": "55 - 67"
+    },
+    {
+      "size": 32,
+      "waist_cm": "74 - 78",
+      "hip_cm": "101 - 107",
+      "body_height_cm": "159 - 169",
+      "weight_kg": "61 - 74"
+    },
+    {
+      "size": 34,
+      "waist_cm": "79 - 83",
+      "hip_cm": "106 - 112",
+      "body_height_cm": "160 - 170",
+      "weight_kg": "67 - 82"
+    },
+    {
+      "size": 36,
+      "waist_cm": "84 - 88",
+      "hip_cm": "111 - 117",
+      "body_height_cm": "162 - 172",
+      "weight_kg": "73 - 90"
+    },
+    {
+      "size": 38,
+      "waist_cm": "89 - 93",
+      "hip_cm": "116 - 122",
+      "body_height_cm": "163 - 173",
+      "weight_kg": "80 - 99"
+    },
+    {
+      "size": 40,
+      "waist_cm": "94 - 98",
+      "hip_cm": "121 - 127",
+      "body_height_cm": "163 - 174",
+      "weight_kg": "87 - 108"
+    },
+    {
+      "size": 42,
+      "waist_cm": "99 - 103",
+      "hip_cm": "126 - 132",
+      "body_height_cm": "163 - 174",
+      "weight_kg": "94 - 117"
+    },
+    {
+      "size": 44,
+      "waist_cm": "104 - 108",
+      "hip_cm": "131 - 137",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "101 - 126"
+    },
+    {
+      "size": 46,
+      "waist_cm": "109 - 113",
+      "hip_cm": "136 - 142",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "109 - 135"
+    },
+    {
+      "size": 48,
+      "waist_cm": "114 - 118",
+      "hip_cm": "141 - 147",
+      "body_height_cm": "163 - 176",
+      "weight_kg": "117 - 145"
+    },
+    {
+      "size": 50,
+      "waist_cm": "119 - 123",
+      "hip_cm": "146 - 152",
+      "body_height_cm": "163 - 176",
+      "weight_kg": "125 - 155"
+    }
+  ],
+  "EU": [
+    {
+      "size": 34,
+      "waist_cm": "65 - 70",
+      "hip_cm": "92 - 98",
+      "body_height_cm": "158 - 168",
+      "weight_kg": "51 - 63"
+    },
+    {
+      "size": 36,
+      "waist_cm": "70 - 75",
+      "hip_cm": "97 - 103",
+      "body_height_cm": "160 - 170",
+      "weight_kg": "57 - 70"
+    },
+    {
+      "size": 38,
+      "waist_cm": "75 - 80",
+      "hip_cm": "102 - 108",
+      "body_height_cm": "162 - 172",
+      "weight_kg": "63 - 77"
+    },
+    {
+      "size": 40,
+      "waist_cm": "80 - 85",
+      "hip_cm": "107 - 113",
+      "body_height_cm": "163 - 173",
+      "weight_kg": "69 - 85"
+    },
+    {
+      "size": 42,
+      "waist_cm": "85 - 90",
+      "hip_cm": "112 - 118",
+      "body_height_cm": "163 - 173",
+      "weight_kg": "75 - 93"
+    },
+    {
+      "size": 44,
+      "waist_cm": "90 - 95",
+      "hip_cm": "117 - 123",
+      "body_height_cm": "163 - 174",
+      "weight_kg": "82 - 102"
+    },
+    {
+      "size": 46,
+      "waist_cm": "95 - 100",
+      "hip_cm": "122 - 128",
+      "body_height_cm": "163 - 174",
+      "weight_kg": "89 - 111"
+    },
+    {
+      "size": 48,
+      "waist_cm": "100 - 105",
+      "hip_cm": "127 - 133",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "97 - 120"
+    },
+    {
+      "size": 50,
+      "waist_cm": "105 - 110",
+      "hip_cm": "132 - 138",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "105 - 129"
+    },
+    {
+      "size": 52,
+      "waist_cm": "110 - 115",
+      "hip_cm": "137 - 143",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "113 - 138"
+    },
+    {
+      "size": 54,
+      "waist_cm": "115 - 120",
+      "hip_cm": "142 - 148",
+      "body_height_cm": "163 - 176",
+      "weight_kg": "121 - 148"
+    },
+    {
+      "size": 56,
+      "waist_cm": "120 - 125",
+      "hip_cm": "147 - 153",
+      "body_height_cm": "163 - 176",
+      "weight_kg": "129 - 158"
+    }
+  ],
+  "TR": [
+    {
+      "size": 34,
+      "waist_cm": "63 - 67",
+      "hip_cm": "89 - 94",
+      "body_height_cm": "156 - 166",
+      "weight_kg": "48 - 60"
+    },
+    {
+      "size": 36,
+      "waist_cm": "68 - 72",
+      "hip_cm": "94 - 99",
+      "body_height_cm": "157 - 167",
+      "weight_kg": "53 - 66"
+    },
+    {
+      "size": 38,
+      "waist_cm": "73 - 77",
+      "hip_cm": "99 - 104",
+      "body_height_cm": "158 - 168",
+      "weight_kg": "59 - 73"
+    },
+    {
+      "size": 40,
+      "waist_cm": "78 - 82",
+      "hip_cm": "104 - 109",
+      "body_height_cm": "160 - 170",
+      "weight_kg": "65 - 81"
+    },
+    {
+      "size": 42,
+      "waist_cm": "83 - 87",
+      "hip_cm": "109 - 114",
+      "body_height_cm": "161 - 171",
+      "weight_kg": "71 - 89"
+    },
+    {
+      "size": 44,
+      "waist_cm": "88 - 92",
+      "hip_cm": "114 - 119",
+      "body_height_cm": "162 - 172",
+      "weight_kg": "77 - 97"
+    },
+    {
+      "size": 46,
+      "waist_cm": "93 - 97",
+      "hip_cm": "119 - 124",
+      "body_height_cm": "162 - 172",
+      "weight_kg": "84 - 106"
+    },
+    {
+      "size": 48,
+      "waist_cm": "98 - 102",
+      "hip_cm": "124 - 129",
+      "body_height_cm": "162 - 173",
+      "weight_kg": "91 - 115"
+    },
+    {
+      "size": 50,
+      "waist_cm": "103 - 107",
+      "hip_cm": "129 - 134",
+      "body_height_cm": "162 - 173",
+      "weight_kg": "98 - 124"
+    },
+    {
+      "size": 52,
+      "waist_cm": "108 - 112",
+      "hip_cm": "134 - 139",
+      "body_height_cm": "162 - 174",
+      "weight_kg": "106 - 133"
+    },
+    {
+      "size": 54,
+      "waist_cm": "113 - 117",
+      "hip_cm": "139 - 144",
+      "body_height_cm": "162 - 174",
+      "weight_kg": "113 - 143"
+    },
+    {
+      "size": 56,
+      "waist_cm": "118 - 122",
+      "hip_cm": "144 - 149",
+      "body_height_cm": "162 - 174",
+      "weight_kg": "121 - 152"
+    }
+  ],
+  "IT": [
+    {
+      "size": 34,
+      "waist_cm": "65 - 69",
+      "hip_cm": "90 - 95",
+      "body_height_cm": "159 - 169",
+      "weight_kg": "50 - 62"
+    },
+    {
+      "size": 36,
+      "waist_cm": "70 - 74",
+      "hip_cm": "95 - 100",
+      "body_height_cm": "161 - 171",
+      "weight_kg": "56 - 69"
+    },
+    {
+      "size": 38,
+      "waist_cm": "75 - 79",
+      "hip_cm": "100 - 105",
+      "body_height_cm": "162 - 172",
+      "weight_kg": "62 - 76"
+    },
+    {
+      "size": 40,
+      "waist_cm": "80 - 84",
+      "hip_cm": "105 - 110",
+      "body_height_cm": "163 - 173",
+      "weight_kg": "68 - 84"
+    },
+    {
+      "size": 42,
+      "waist_cm": "85 - 89",
+      "hip_cm": "110 - 115",
+      "body_height_cm": "163 - 173",
+      "weight_kg": "74 - 92"
+    },
+    {
+      "size": 44,
+      "waist_cm": "90 - 94",
+      "hip_cm": "115 - 120",
+      "body_height_cm": "163 - 174",
+      "weight_kg": "80 - 101"
+    },
+    {
+      "size": 46,
+      "waist_cm": "95 - 99",
+      "hip_cm": "120 - 125",
+      "body_height_cm": "163 - 174",
+      "weight_kg": "87 - 110"
+    },
+    {
+      "size": 48,
+      "waist_cm": "100 - 104",
+      "hip_cm": "125 - 130",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "94 - 119"
+    },
+    {
+      "size": 50,
+      "waist_cm": "105 - 109",
+      "hip_cm": "130 - 135",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "101 - 128"
+    },
+    {
+      "size": 52,
+      "waist_cm": "110 - 114",
+      "hip_cm": "135 - 140",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "109 - 137"
+    },
+    {
+      "size": 54,
+      "waist_cm": "115 - 119",
+      "hip_cm": "140 - 145",
+      "body_height_cm": "163 - 175",
+      "weight_kg": "116 - 147"
+    },
+    {
+      "size": 56,
+      "waist_cm": "120 - 124",
+      "hip_cm": "145 - 150",
+      "body_height_cm": "163 - 176",
+      "weight_kg": "124 - 156"
+    }
+  ],
+  "CH": [
+    {
+      "size": 24,
+      "waist_cm": "60 - 64",
+      "hip_cm": "86 - 91",
+      "body_height_cm": "150 - 160",
+      "weight_kg": "42 - 53"
+    },
+    {
+      "size": 26,
+      "waist_cm": "65 - 69",
+      "hip_cm": "91 - 96",
+      "body_height_cm": "152 - 162",
+      "weight_kg": "47 - 59"
+    },
+    {
+      "size": 28,
+      "waist_cm": "70 - 74",
+      "hip_cm": "96 - 101",
+      "body_height_cm": "154 - 164",
+      "weight_kg": "52 - 65"
+    },
+    {
+      "size": 30,
+      "waist_cm": "75 - 79",
+      "hip_cm": "101 - 106",
+      "body_height_cm": "155 - 165",
+      "weight_kg": "57 - 71"
+    },
+    {
+      "size": 32,
+      "waist_cm": "80 - 84",
+      "hip_cm": "106 - 111",
+      "body_height_cm": "156 - 166",
+      "weight_kg": "63 - 78"
+    },
+    {
+      "size": 34,
+      "waist_cm": "85 - 89",
+      "hip_cm": "111 - 116",
+      "body_height_cm": "157 - 167",
+      "weight_kg": "69 - 86"
+    },
+    {
+      "size": 36,
+      "waist_cm": "90 - 94",
+      "hip_cm": "116 - 121",
+      "body_height_cm": "157 - 167",
+      "weight_kg": "75 - 93"
+    },
+    {
+      "size": 38,
+      "waist_cm": "95 - 99",
+      "hip_cm": "121 - 126",
+      "body_height_cm": "157 - 168",
+      "weight_kg": "82 - 101"
+    },
+    {
+      "size": 40,
+      "waist_cm": "100 - 104",
+      "hip_cm": "126 - 131",
+      "body_height_cm": "158 - 168",
+      "weight_kg": "89 - 110"
+    },
+    {
+      "size": 42,
+      "waist_cm": "105 - 109",
+      "hip_cm": "131 - 136",
+      "body_height_cm": "158 - 169",
+      "weight_kg": "96 - 119"
+    },
+    {
+      "size": 44,
+      "waist_cm": "110 - 114",
+      "hip_cm": "136 - 141",
+      "body_height_cm": "158 - 169",
+      "weight_kg": "104 - 128"
+    },
+    {
+      "size": 46,
+      "waist_cm": "115 - 119",
+      "hip_cm": "141 - 146",
+      "body_height_cm": "158 - 170",
+      "weight_kg": "111 - 137"
+    }
+  ]
+}

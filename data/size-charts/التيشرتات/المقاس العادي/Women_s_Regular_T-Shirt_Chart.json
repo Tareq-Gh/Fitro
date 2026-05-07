@@ -1,0 +1,202 @@
+[
+  {
+    "Region": "United States (US)",
+    "Size": "S",
+    "Chest Circumference (cm)": "86 - 90",
+    "Shoulder Width (cm)": 37,
+    "Body Height (cm)": "155 - 163",
+    "Body Weight (kg)": "50 - 58"
+  },
+  {
+    "Region": "United States (US)",
+    "Size": "M",
+    "Chest Circumference (cm)": "92 - 96",
+    "Shoulder Width (cm)": 39,
+    "Body Height (cm)": "163 - 168",
+    "Body Weight (kg)": "58 - 66"
+  },
+  {
+    "Region": "United States (US)",
+    "Size": "L",
+    "Chest Circumference (cm)": "98 - 102",
+    "Shoulder Width (cm)": 41,
+    "Body Height (cm)": "168 - 173",
+    "Body Weight (kg)": "66 - 74"
+  },
+  {
+    "Region": "United States (US)",
+    "Size": "XL",
+    "Chest Circumference (cm)": "104 - 110",
+    "Shoulder Width (cm)": 43,
+    "Body Height (cm)": "173 - 178",
+    "Body Weight (kg)": "74 - 82"
+  },
+  {
+    "Region": "United States (US)",
+    "Size": "XXL",
+    "Chest Circumference (cm)": "112 - 118",
+    "Shoulder Width (cm)": 45,
+    "Body Height (cm)": "178 - 185",
+    "Body Weight (kg)": "82 - 90"
+  },
+  {
+    "Region": "Turkey (TR)",
+    "Size": "S",
+    "Chest Circumference (cm)": "82 - 86",
+    "Shoulder Width (cm)": 36,
+    "Body Height (cm)": "150 - 158",
+    "Body Weight (kg)": "48 - 56"
+  },
+  {
+    "Region": "Turkey (TR)",
+    "Size": "M",
+    "Chest Circumference (cm)": "88 - 92",
+    "Shoulder Width (cm)": 38,
+    "Body Height (cm)": "158 - 165",
+    "Body Weight (kg)": "56 - 64"
+  },
+  {
+    "Region": "Turkey (TR)",
+    "Size": "L",
+    "Chest Circumference (cm)": "94 - 98",
+    "Shoulder Width (cm)": 40,
+    "Body Height (cm)": "165 - 170",
+    "Body Weight (kg)": "64 - 72"
+  },
+  {
+    "Region": "Turkey (TR)",
+    "Size": "XL",
+    "Chest Circumference (cm)": "100 - 104",
+    "Shoulder Width (cm)": 42,
+    "Body Height (cm)": "170 - 175",
+    "Body Weight (kg)": "72 - 80"
+  },
+  {
+    "Region": "Turkey (TR)",
+    "Size": "XXL",
+    "Chest Circumference (cm)": "106 - 112",
+    "Shoulder Width (cm)": 44,
+    "Body Height (cm)": "175 - 180",
+    "Body Weight (kg)": "80 - 88"
+  },
+  {
+    "Region": "Europe (EU)",
+    "Size": "S",
+    "Chest Circumference (cm)": "84 - 88",
+    "Shoulder Width (cm)": 35,
+    "Body Height (cm)": "155 - 162",
+    "Body Weight (kg)": "45 - 55"
+  },
+  {
+    "Region": "Europe (EU)",
+    "Size": "M",
+    "Chest Circumference (cm)": "90 - 94",
+    "Shoulder Width (cm)": 37,
+    "Body Height (cm)": "162 - 168",
+    "Body Weight (kg)": "55 - 65"
+  },
+  {
+    "Region": "Europe (EU)",
+    "Size": "L",
+    "Chest Circumference (cm)": "96 - 100",
+    "Shoulder Width (cm)": 39,
+    "Body Height (cm)": "168 - 173",
+    "Body Weight (kg)": "65 - 75"
+  },
+  {
+    "Region": "Europe (EU)",
+    "Size": "XL",
+    "Chest Circumference (cm)": "102 - 108",
+    "Shoulder Width (cm)": 41,
+    "Body Height (cm)": "173 - 178",
+    "Body Weight (kg)": "75 - 85"
+  },
+  {
+    "Region": "Europe (EU)",
+    "Size": "XXL",
+    "Chest Circumference (cm)": "110 - 116",
+    "Shoulder Width (cm)": 43,
+    "Body Height (cm)": "178 - 183",
+    "Body Weight (kg)": "85 - 95"
+  },
+  {
+    "Region": "Italy (IT)",
+    "Size": "S",
+    "Chest Circumference (cm)": "80",
+    "Shoulder Width (cm)": 34,
+    "Body Height (cm)": "150 - 160",
+    "Body Weight (kg)": "40 - 50"
+  },
+  {
+    "Region": "Italy (IT)",
+    "Size": "M",
+    "Chest Circumference (cm)": "84",
+    "Shoulder Width (cm)": 36,
+    "Body Height (cm)": "160 - 165",
+    "Body Weight (kg)": "50 - 60"
+  },
+  {
+    "Region": "Italy (IT)",
+    "Size": "L",
+    "Chest Circumference (cm)": "88",
+    "Shoulder Width (cm)": 38,
+    "Body Height (cm)": "165 - 170",
+    "Body Weight (kg)": "60 - 70"
+  },
+  {
+    "Region": "Italy (IT)",
+    "Size": "XL",
+    "Chest Circumference (cm)": "92",
+    "Shoulder Width (cm)": 40,
+    "Body Height (cm)": "170 - 175",
+    "Body Weight (kg)": "70 - 80"
+  },
+  {
+    "Region": "Italy (IT)",
+    "Size": "XXL",
+    "Chest Circumference (cm)": "96",
+    "Shoulder Width (cm)": 42,
+    "Body Height (cm)": "175 - 180",
+    "Body Weight (kg)": "80 - 90"
+  },
+  {
+    "Region": "China (CH)",
+    "Size": "S",
+    "Chest Circumference (cm)": "76",
+    "Shoulder Width (cm)": 33,
+    "Body Height (cm)": "145 - 153",
+    "Body Weight (kg)": "35 - 45"
+  },
+  {
+    "Region": "China (CH)",
+    "Size": "M",
+    "Chest Circumference (cm)": "80",
+    "Shoulder Width (cm)": 35,
+    "Body Height (cm)": "153 - 158",
+    "Body Weight (kg)": "45 - 55"
+  },
+  {
+    "Region": "China (CH)",
+    "Size": "L",
+    "Chest Circumference (cm)": "84",
+    "Shoulder Width (cm)": 37,
+    "Body Height (cm)": "158 - 163",
+    "Body Weight (kg)": "55 - 65"
+  },
+  {
+    "Region": "China (CH)",
+    "Size": "XL",
+    "Chest Circumference (cm)": "88",
+    "Shoulder Width (cm)": 39,
+    "Body Height (cm)": "163 - 168",
+    "Body Weight (kg)": "65 - 75"
+  },
+  {
+    "Region": "China (CH)",
+    "Size": "XXL",
+    "Chest Circumference (cm)": "92",
+    "Shoulder Width (cm)": 41,
+    "Body Height (cm)": "168 - 175",
+    "Body Weight (kg)": "75 - 85"
+  }
+]
