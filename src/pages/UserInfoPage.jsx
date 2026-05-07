@@ -1,4 +1,4 @@
-﻿import { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import {
   User,
   Ruler,
@@ -343,26 +343,26 @@ export function UserInfoPage({
       saveFailed = true;
     }
 
-    const toB64 = (file) =>
-      new Promise((res) => {
-        const r = new FileReader();
-        r.onload = () => res(r.result);
-        r.readAsDataURL(file);
-      });
-
     let aiImageUrl = null;
     let sizeProfile = null;
     try {
-      const garmentB64 = await toB64(images.garment);
-      const bodyB64 = images.body ? await toB64(images.body) : null;
-      const { data } = await submitTryOn({
-        garment_image_b64: garmentB64,
-        body_image_b64: bodyB64,
-        category: product.category,
-        fit_type: product.fit_type,
-      });
-      aiImageUrl = data.image_url ?? null;
-    } catch {
+      const { client } = await import("@gradio/client");
+      const app = await client("yisol/IDM-VTON");
+      
+      const result = await app.predict("/tryon", [
+        { background: images.body || images.garment, layers: [], composite: null }, // صورة الشخص
+        images.garment, // صورة الملابس
+        "", // وصف الملابس (اختياري)
+        true, 
+        false,
+        30,
+        42,
+      ]);
+      
+      // نستخرج رابط الصورة من الـ response
+      aiImageUrl = result.data[0]?.url || result.data[0] || null;
+    } catch (err) {
+      console.error("Try-On Error:", err);
       aiImageUrl = null;
     }
 

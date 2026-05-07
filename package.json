@@ -11,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@gradio/client": "^2.2.0",
     "axios": "^1.7.0",
     "jose": "^5.9.6",
     "lucide-react": "^0.428.0",
